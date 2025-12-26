@@ -1,65 +1,204 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { FeaturedProducts } from "@/components/featured-products";
+import { CustomerReviews } from "@/components/customer-reviews";
+import { WatchAndShop } from "@/components/watch-and-shop";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
+import { GlitchButton } from "@/components/uiverse/glitch-button";
+import { MagicCard } from "@/components/uiverse/magic-card";
+import { NeonButton } from "@/components/uiverse/neon-button";
+import { AnimatedTitle } from "@/components/anime/animated-title";
+import { useCartContext } from "@/components/cart-context";
+
+export default function HomePage() {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const { addToCart } = useCartContext();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const reveals = document.querySelectorAll(".reveal");
+      reveals.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 150) {
+          el.classList.add("active");
+        }
+      });
+    };
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % 3);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div className="min-h-screen text-foreground">
+      {/* ======= Banners ======= */}
+      <div className="bg-black text-white text-[10px] md:text-xs text-center py-1.5 px-4 tracking-wide">
+        <span className="font-bold text-secondary">NEW:</span> Cash on Delivery Now Available! 🎮
+      </div>
+      <div className="bg-gradient-to-r from-playstation via-primary to-xbox text-white text-[10px] md:text-xs text-center py-1.5 px-4 font-medium tracking-wide">
+        🔥 Today's Exclusive Deals – Level Up Your Gear!
+      </div>
+
+      <SiteHeader />
+
+      {/* ======= Hero Banner ======= */}
+      <div className="relative w-full h-[300px] md:h-[400px] lg:h-[500px] mb-6">
+        <picture>
+          <source media="(max-width: 639px)" srcSet="/Images/phone_images/hero_banner.webp" />
+          <img
+            src="/Images/Image_WEPB/home.webp"
+            alt="XP Store"
+            className="w-full h-full object-cover object-center"
+          />
+        </picture>
+
+        <div className="absolute inset-0 w-full p-6 bg-gradient-to-t from-black/80 to-transparent text-white flex items-center justify-center text-center">
+          <div className="bg-black/80 backdrop-blur-sm p-6 md:p-10 rounded-lg max-w-3xl border border-white/10">
+            <AnimatedTitle 
+              text="XP Store" 
+              className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4 leading-tight text-white block"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <p className="text-base mb-6 text-blue-300 md:text-lg max-w-2xl mx-auto">
+              Your ultimate marketplace for consoles, accessories & premium game titles.
+            </p>
+            <div className="flex justify-center">
+              <div className="w-48">
+                <GlitchButton text="SHOP NOW" href="/shop" />
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
+      </div>
+
+      {/* ======= Featured Collection Banner ======= */}
+      <div className="px-6 md:px-12 mb-8 reveal">
+        <div className="block relative w-full h-[200px] md:h-[250px] rounded-2xl overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-900 via-primary to-blue-900 transition-transform duration-700 group-hover:scale-105"></div>
+          <div className="absolute inset-0 bg-[url('/Images/product-1.webp')] opacity-20 bg-cover bg-center mix-blend-overlay transition-opacity duration-500 group-hover:opacity-30"></div>
+          
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-6 text-center">
+            <h2 className="text-2xl md:text-4xl font-bold mb-4 tracking-tight group-hover:scale-105 transition-transform duration-300">
+              Featured Collection
+            </h2>
+            <p className="text-blue-100 mb-6 max-w-lg text-sm md:text-base opacity-90 hidden md:block">
+              Discover the gear that defines the next generation of gaming.
+            </p>
+            <div className="transform transition-transform duration-300 group-hover:scale-110">
+                <NeonButton text="EXPLORE NOW" href="/shop" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ======= Featured Products ======= */}
+      <FeaturedProducts />
+
+      {/* ======= Best Sellers Section (Replaced with Magic Cards) ======= */}
+      <section className="py-12 px-6 md:px-12 bg-background reveal">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl font-semibold mb-6 text-foreground">Best Sellers</h2>
+          <p className="text-muted-foreground mb-10">Explore our most popular picks loved by gamers and collectors.</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 h-[380px]">
+             {[
+              { 
+                _id: "bs1", 
+                name: "PS5 Console", 
+                description: "Experience lightning fast loading with an ultra-high speed SSD.",
+                price: 49999, 
+                image: "/Images/product-1.webp",
+                category: "Consoles",
+                stock: 10
+              },
+              { 
+                _id: "bs2", 
+                name: "Xbox Series X", 
+                description: "The fastest, most powerful Xbox ever.",
+                price: 49999,
+                image: "/Images/product-2.webp",
+                category: "Consoles",
+                stock: 15
+              },
+              { 
+                _id: "bs3", 
+                name: "Nintendo Switch", 
+                description: "Play loud, play proud, play anywhere.",
+                price: 29999,
+                image: "/Images/product-3.webp",
+                category: "Consoles",
+                stock: 20
+              },
+              { 
+                _id: "bs4", 
+                name: "Pro Gaming Headset", 
+                description: "Immersive sound for the competitive edge.",
+                price: 14999,
+                image: "/Images/product-4.webp",
+                category: "Accessories",
+                stock: 25
+              }
+            ].map((item) => (
+              <div key={item._id} className="h-full">
+                <MagicCard 
+                  title={item.name} 
+                  image={item.image}
+                  price={item.price}
+                  onAddToCart={() => addToCart(item, 1)}
+                />
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* ======= Carousel Section ======= */}
+      <section className="bg-accent/30 py-12 reveal">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-3xl font-semibold mb-6 text-foreground">New Arrivals</h2>
+
+          <div className="relative overflow-hidden rounded-2xl">
+            <div
+              className="flex transition-transform duration-700 ease-in-out"
+              style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+            >
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="min-w-full px-4">
+                  <img src={`/Images/slide-${n}.webp`} alt={`Slide ${n}`} className="rounded-lg w-full h-96 object-cover" />
+                </div>
+              ))}
+            </div>
+
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+              {[0, 1, 2].map((i) => (
+                <button
+                  key={i}
+                  className={`w-3 h-3 rounded-full transition-all ${activeSlide === i ? "bg-primary w-8" : "bg-muted-foreground/50 hover:bg-primary/50"}`}
+                  onClick={() => setActiveSlide(i)}
+                ></button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ======= Watch & Shop ======= */}
+      <WatchAndShop />
+
+      {/* ======= Customer Reviews ======= */}
+      <CustomerReviews />
+
+      <SiteFooter />
     </div>
   );
 }
