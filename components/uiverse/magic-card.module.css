@@ -1,0 +1,110 @@
+.card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #191c29;
+    border-radius: 10px;
+    /* Slightly larger radius */
+    display: flex;
+    flex-direction: column;
+    color: rgb(88 199 250 / 0%);
+    cursor: pointer;
+    overflow: hidden;
+    /* Important for containing children */
+}
+
+/* The glowing border effect */
+.card::before,
+.card::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(transparent,
+            rgba(6, 182, 212, 1),
+            transparent 30%);
+    animation: rotate 4s linear infinite;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card::after {
+    background: conic-gradient(transparent,
+            rgba(220, 38, 38, 1),
+            transparent 30%);
+    animation-delay: -2s;
+    /* Offset for cooler effect if multiple */
+    display: none;
+    /* Keep simple for now */
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Inner content area covering the center */
+.content {
+    position: absolute;
+    inset: 3px;
+    /* Border thickness */
+    background: #101010;
+    /* Dark card background */
+    border-radius: 8px;
+    /* Inner radius */
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.image_container {
+    height: 60%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.card:hover .image {
+    transform: scale(1.1);
+}
+
+.details {
+    padding: 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: white;
+}
+
+.title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #e2e8f0;
+    margin-bottom: 0.5rem;
+}
+
+.price {
+    font-size: 1.2rem;
+    color: #22d3ee;
+    font-weight: bold;
+}

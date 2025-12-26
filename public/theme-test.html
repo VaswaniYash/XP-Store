@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Test</title>
+    <style>
+        :root {
+            --background: #ffffff;
+            --foreground: #000000;
+        }
+        
+        .dark {
+            --background: #09090b;
+            --foreground: #f8fafc;
+        }
+        
+        body {
+            background: var(--background);
+            color: var(--foreground);
+            font-family: system-ui;
+            padding: 40px;
+            transition: background 0.3s, color 0.3s;
+        }
+        
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 2px solid currentColor;
+            background: transparent;
+            color: inherit;
+            border-radius: 8px;
+        }
+        
+        button:hover {
+            background: var(--foreground);
+            color: var(--background);
+        }
+    </style>
+</head>
+<body>
+    <h1>Theme Toggle Test</h1>
+    <p>Current theme: <span id="current-theme">light</span></p>
+    <button onclick="toggleTheme()">Toggle Theme</button>
+    
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.contains('dark');
+            
+            if (isDark) {
+                html.classList.remove('dark');
+                document.getElementById('current-theme').textContent = 'light';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                document.getElementById('current-theme').textContent = 'dark';
+                localStorage.setItem('theme', 'dark');
+            }
+            
+            console.log('Theme toggled to:', isDark ? 'light' : 'dark');
+            console.log('HTML classes:', html.className);
+        }
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.getElementById('current-theme').textContent = 'dark';
+        }
+    </script>
+</body>
+</html>
