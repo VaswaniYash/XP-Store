@@ -9,18 +9,23 @@ import { useCartContext } from "@/components/cart-context"; // Import CartContex
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
+  // Removed local cartOpen state
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const pathname = usePathname();
   
   // Use Cart Context
-  const { items, itemCount, total, removeFromCart, updateQuantity } = useCartContext();
+  const { items, itemCount, total, removeFromCart, updateQuantity, isCartOpen, openCart, closeCart } = useCartContext();
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
   const closeMenu = () => setMenuOpen(false);
 
-  const toggleCart = () => setCartOpen((prev) => !prev);
-  const closeCart = () => setCartOpen(false);
+  const toggleCart = () => {
+    if (isCartOpen) {
+      closeCart();
+    } else {
+      openCart();
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -93,6 +98,8 @@ export function SiteHeader() {
         </div>
       )}
 
+
+
       {/* Spacer for fixed navbar */}
       <div className="h-[65px] lg:hidden"></div>
 
@@ -126,9 +133,9 @@ export function SiteHeader() {
           <div className="flex items-center space-x-4">
             <div className="flex items-center gap-2 border-r border-border pr-4 mr-2">
               <ThemeToggle />
-              <button className="p-2 hover:bg-accent rounded-full transition-colors text-muted-foreground hover:text-destructive">
+              <Link href="/wishlist" className="p-2 hover:bg-accent rounded-full transition-colors text-muted-foreground hover:text-red-500">
                 <i className="ri-heart-line text-lg"></i>
-              </button>
+              </Link>
               <button onClick={toggleCart} className="p-2 hover:bg-accent rounded-full transition-colors text-muted-foreground hover:text-secondary relative">
                 <i className="ri-shopping-cart-line text-lg"></i>
                 {itemCount > 0 && (
@@ -181,7 +188,7 @@ export function SiteHeader() {
       {/* ======= Side Cart ======= */}
       <div
         className={`fixed top-0 right-0 h-full w-80 md:w-96 bg-card border-l border-border shadow-2xl z-[999] transform transition-transform duration-300 ${
-          cartOpen ? "translate-x-0" : "translate-x-full"
+          isCartOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex justify-between items-center p-4 border-b border-border bg-background/50">
@@ -255,21 +262,21 @@ export function SiteHeader() {
             <span>Total</span>
             <span className="text-primary text-xl">₹{total.toLocaleString()}</span>
           </div>
-          <button 
-            disabled={items.length === 0}
-            className={`w-full py-3 rounded-lg font-medium transition-all shadow-lg ${
+          <Link 
+            href="/checkout"
+            className={`block w-full text-center py-3 rounded-lg font-medium transition-all shadow-lg ${
               items.length === 0 
-                ? "bg-muted text-muted-foreground cursor-not-allowed" 
+                ? "bg-muted text-muted-foreground cursor-not-allowed pointer-events-none" 
                 : "bg-primary text-white hover:bg-primary/90 shadow-primary/20 hover:shadow-primary/40"
             }`}
           >
             Checkout
-          </button>
+          </Link>
         </div>
       </div>
       
       {/* Overlay for Cart */}
-      {cartOpen && (
+      {isCartOpen && (
         <div 
             className="fixed inset-0 bg-black/50 z-[998] backdrop-blur-sm"
             onClick={closeCart}

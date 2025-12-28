@@ -13,6 +13,9 @@ interface CartContextType {
   clearCart: () => void;
   total: number;
   itemCount: number;
+  isCartOpen: boolean;
+  openCart: () => void;
+  closeCart: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
