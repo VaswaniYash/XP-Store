@@ -32,12 +32,12 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Card className="group overflow-hidden border-border hover:border-accent transition-all duration-300 h-full flex flex-col bg-card hover:shadow-lg">
-      <Link href={`/product/${product._id}`} className="block h-40">
-        <CardHeader className="p-0 overflow-hidden relative h-full">
+      <Link href={`/product/${product._id}`} className="block w-full aspect-square bg-muted/10">
+        <CardHeader className="p-0 overflow-hidden relative w-full h-full">
           <img
             src={product.image || "/placeholder.svg"}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
           <div className={`absolute top-2 right-2 ${platformColors[product.category] || 'bg-gray-500'} text-white px-3 py-1 rounded-full text-xs font-semibold`}>
             {product.category}
@@ -47,7 +47,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
       <CardContent className="pt-4 pb-2 flex-1">
         <Link href={`/product/${product._id}`}>
-          <h3 className="font-bold text-sm mb-2 line-clamp-2 text-foreground group-hover:text-accent transition-colors">
+          <h3 className="font-bold text-sm mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors">
             {product.name}
           </h3>
         </Link>
@@ -58,7 +58,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 fill-accent text-accent" />
+            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
             <span className="text-xs font-semibold text-foreground">4.5</span>
           </div>
           <span className="text-xs text-muted-foreground">Action</span>

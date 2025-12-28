@@ -48,6 +48,11 @@ export function useCart() {
     const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
+    const [isCartOpen, setIsCartOpen] = useState(false);
+
+    const openCart = () => setIsCartOpen(true);
+    const closeCart = () => setIsCartOpen(false);
+
     return {
         items,
         loading,
@@ -56,6 +61,9 @@ export function useCart() {
         updateQuantity,
         clearCart,
         total,
-        itemCount
+        itemCount,
+        isCartOpen,
+        openCart,
+        closeCart
     };
 }

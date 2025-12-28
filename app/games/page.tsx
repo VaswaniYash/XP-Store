@@ -304,7 +304,7 @@ export default function GamesPage() {
             lg:w-1/4 space-y-8
             ${showMobileFilters ? 'block' : 'hidden lg:block'}
           `}>
-            <div className="sticky top-24 bg-card/50 dark:bg-zinc-900/50 p-6 rounded-2xl border border-border/50 backdrop-blur-xl shadow-sm">
+            <div className="sticky top-24 bg-white/80 dark:bg-zinc-900/50 p-6 rounded-2xl border border-border dark:border-border/50 backdrop-blur-xl shadow-lg dark:shadow-sm">
               <div className="flex items-center gap-2 mb-6">
                 <Filter className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                 <h3 className="font-bold text-lg">Filters</h3>
@@ -320,7 +320,7 @@ export default function GamesPage() {
                         id={`cat-${cat}`} 
                         checked={selectedCategories.includes(cat)}
                         onCheckedChange={() => toggleCategory(cat)}
-                        className="border-muted-foreground/30 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
+                        className="border-zinc-300 dark:border-muted-foreground/30 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
                       />
                       <Label 
                         htmlFor={`cat-${cat}`} 
@@ -333,7 +333,7 @@ export default function GamesPage() {
                 </div>
               </div>
 
-              <Separator className="bg-border/50 my-6" />
+              <Separator className="bg-border my-6" />
 
                {/* Price Filter */}
                <div className="space-y-4 mb-8">
@@ -351,7 +351,7 @@ export default function GamesPage() {
                 />
               </div>
 
-              <Separator className="bg-border/50 my-6" />
+              <Separator className="bg-border my-6" />
 
               {/* Genre Filter */}
               <div className="space-y-4">
@@ -363,7 +363,7 @@ export default function GamesPage() {
                         id={`genre-${genre}`} 
                         checked={selectedGenres.includes(genre)}
                         onCheckedChange={() => toggleGenre(genre)}
-                        className="border-muted-foreground/30 data-[state=checked]:bg-purple-600"
+                        className="border-zinc-300 dark:border-muted-foreground/30 data-[state=checked]:bg-purple-600"
                       />
                       <Label htmlFor={`genre-${genre}`} className="text-xs text-foreground/70 cursor-pointer truncated hover:text-foreground transition-colors">
                         {genre}

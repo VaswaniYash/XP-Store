@@ -327,10 +327,10 @@ export default function AccessoriesPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SiteHeader />
       
-      <div className="flex flex-1 pt-16 lg:pt-20">
+      <div className="flex flex-1">
         
         {/* Left Sidebar - Desktop */}
-        <aside className="hidden lg:flex flex-col w-64 h-[calc(100vh-80px)] sticky top-20 border-r border-border bg-background/50 backdrop-blur-xl overflow-y-auto z-30">
+        <aside className="hidden lg:flex flex-col w-64 h-[calc(100vh-88px)] fixed left-0 top-[88px] border-r border-border bg-background/50 backdrop-blur-xl overflow-y-auto z-30">
           <div className="p-6">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
               <Filter className="w-5 h-5" />
@@ -394,7 +394,7 @@ export default function AccessoriesPage() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 w-full relative">
+        <main className="flex-1 w-full relative lg:ml-64">
           
           {/* Mobile Category Nav (Horizontal Scroll) */}
           <div className="lg:hidden sticky top-[73px] z-40 bg-background/95 backdrop-blur border-b border-border overflow-x-auto">
@@ -546,7 +546,9 @@ export default function AccessoriesPage() {
         </main>
       </div>
 
-      <SiteFooter />
+      <div className="lg:ml-64">
+        <SiteFooter />
+      </div>
     </div>
   );
 }
