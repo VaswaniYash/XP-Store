@@ -1,41 +1,51 @@
-import { connectDB } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-import { Product } from '@/lib/mongoose-models';
+import { products } from '@/lib/products';
 
 export async function GET(request: NextRequest) {
   try {
-    await connectDB();
-
     const searchParams = request.nextUrl.searchParams;
+    const category = searchParams.get('category');
     const platform = searchParams.get('platform');
     const genre = searchParams.get('genre');
     const sort = searchParams.get('sort') || 'newest';
     const page = parseInt(searchParams.get('page') || '1');
     const limit = 12;
 
-    const filter: any = {};
-    if (platform) filter.platform = platform;
-    if (genre) filter.genre = genre;
+    let filteredProducts = [...products];
 
-    let sortObj: any = { createdAt: -1 };
-    if (sort === 'price-low') sortObj = { price: 1 };
-    if (sort === 'price-high') sortObj = { price: -1 };
-    if (sort === 'rating') sortObj = { rating: -1 };
+    // Filter by Platform (which maps to category in our static data)
+    if (platform) {
+      filteredProducts = filteredProducts.filter(p => p.category.toLowerCase() === platform.toLowerCase());
+    }
 
-    const skip = (page - 1) * limit;
+    // Filter by Category if explicitly passed
+    if (category) {
+      filteredProducts = filteredProducts.filter(p => p.category.toLowerCase() === category.toLowerCase());
+    }
 
-    const products = await Product.find(filter)
-      .sort(sortObj)
-      .skip(skip)
-      .limit(limit);
+    // Sort
+    if (sort === 'price-low') {
+      filteredProducts.sort((a, b) => a.price - b.price);
+    } else if (sort === 'price-high') {
+      filteredProducts.sort((a, b) => b.price - a.price);
+    } else if (sort === 'rating') {
+      // Mock rating if not present
+      filteredProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    } else {
+      // Newest (just reverse original array for now as a proxy)
+      filteredProducts.reverse();
+    }
 
-    const total = await Product.countDocuments(filter);
+    const total = filteredProducts.length;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
 
     return NextResponse.json(
       {
         success: true,
         data: {
-          products,
+          products: paginatedProducts,
           pagination: {
             total,
             pages: Math.ceil(total / limit),

@@ -17,173 +17,228 @@ import { useCartContext } from "@/components/cart-context";
 
 // Extended Game Interface for local usage
 interface GameProduct extends Product {
-  genre: string;
-  rating: number;
-  releaseYear: number;
+  genre?: string;
+  rating?: number;
+  releaseYear?: number;
 }
 
-// Hero Product Definition (Matches GOW Ragnarok)
-const heroProduct: Product = {
-  _id: "g1",
-  name: "God of War Ragnarök",
-  description: "Embark on an epic and heartfelt journey as Kratos and Atreus struggle with holding on and letting go.",
-  price: 4999,
-  image: "/Images/gow_cover.png",
-  category: "PlayStation",
-  stock: 50,
-};
-
-// Enhanced Game Data with genres and ratings
 const allGames: GameProduct[] = [
-  // PlayStation Games
   {
     _id: "g1",
-    name: "God of War Ragnarök",
-    description: "Embark on an epic and heartfelt journey as Kratos and Atreus struggle with holding on and letting go.",
-    price: 4999,
-    image: "/Images/gow_cover.png",
-    category: "PlayStation",
-    stock: 50,
-    genre: "Action-Adventure",
+    name: "Elden Ring",
+    description: "Winner of Game of the Year. An expansive fantasy world created by Hidetaka Miyazaki and George R.R. Martin.",
+    price: 3999,
+    image: "/Images/games/elden-ring.png",
+    category: "PlayStation", // Using category as platform for filter
+    platform: "PlayStation",
+    genre: "RPG",
     rating: 4.9,
-    releaseYear: 2022
+    stock: 50
   },
   {
     _id: "g2",
-    name: "Spider-Man 2",
-    description: "The incredible power of the symbiote forces Peter and Miles to face the ultimate test of strength.",
+    name: "God of War Ragnarök",
+    description: "The Santa Monica Studio presents the sequel to the critically acclaimed God of War (2018). Kratos and Atreus must journey to each of the Nine Realms.",
     price: 4999,
-    image: "/Images/product-1.webp",
+    image: "/Images/games/god-of-war.png",
     category: "PlayStation",
-    stock: 45,
-    genre: "Action",
-    rating: 4.8,
-    releaseYear: 2023
+    platform: "PlayStation",
+    genre: "Action-Adventure",
+    rating: 4.9,
+    stock: 45
   },
   {
     _id: "g3",
-    name: "Horizon Forbidden West",
-    description: "Join Aloy as she braves the Forbidden West - a majestic but dangerous frontier that conceals mysterious new threats.",
-    price: 3999,
-    image: "/Images/product-1.webp",
-    category: "PlayStation",
-    stock: 40,
-    genre: "RPG",
-    rating: 4.7,
-    releaseYear: 2022
-  },
-  {
-    _id: "g4",
-    name: "The Last of Us Part II",
-    description: "Experience the escalating moral conflicts created by Ellie's relentless pursuit of vengeance.",
-    price: 3499,
-    image: "/Images/product-1.webp",
-    category: "PlayStation",
-    stock: 35,
-    genre: "Survival Horror",
-    rating: 4.9,
-    releaseYear: 2020
-  },
-
-  // Xbox Games
-  {
-    _id: "g5",
     name: "Halo Infinite",
-    description: "When all hope is lost and humanity's fate hangs in the balance, Master Chief is ready to confront the most ruthless foe.",
+    description: "The legendary Halo series returns with the most expansive Master Chief campaign yet and a ground-breaking free to play multiplayer experience.",
     price: 3999,
-    image: "/Images/product-2.webp",
+    image: "/Images/games/halo-infinite.png",
     category: "Xbox",
-    stock: 60,
+    platform: "Xbox",
     genre: "FPS",
     rating: 4.5,
-    releaseYear: 2021
+    stock: 60
+  },
+  {
+    _id: "g4", 
+    name: "The Legend of Zelda: Tears of the Kingdom",
+    description: "In this sequel to the Legend of Zelda: Breath of the Wild, you'll decide your own path through the sprawling landscapes of Hyrule.",
+    price: 4999,
+    image: "/Images/games/zelda-totk.png",
+    category: "Nintendo",
+    platform: "Nintendo",
+    genre: "Adventure",
+    rating: 5.0,
+    stock: 80
+  },
+  {
+    _id: "g5",
+    name: "Marvel's Spider-Man 2",
+    description: "Spider-Men Peter Parker and Miles Morales face the ultimate test of strength inside and outside the mask as they fight to save the city.",
+    price: 4999,
+    image: "/Images/games/spiderman-2.png",
+    category: "PlayStation",
+    platform: "PlayStation",
+    genre: "Action",
+    rating: 4.8,
+    stock: 50
   },
   {
     _id: "g6",
     name: "Forza Horizon 5",
-    description: "Explore the vibrant and ever-evolving open world landscapes of Mexico with limitless, fun driving action.",
+    description: "Your Ultimate Horizon Adventure awaits! Explore the vibrant and ever-evolving open world landscapes of Mexico with limitless, fun driving action.",
     price: 3999,
-    image: "/Images/product-2.webp",
+    image: "/Images/games/forza.png",
     category: "Xbox",
-    stock: 55,
+    platform: "Xbox",
     genre: "Racing",
     rating: 4.8,
-    releaseYear: 2021
+    stock: 55
   },
   {
     _id: "g7",
-    name: "Starfield",
-    description: "In this next generation role-playing game set amongst the stars, create any character you want and explore with unparalleled freedom.",
-    price: 4999,
-    image: "/Images/product-2.webp",
-    category: "Xbox",
-    stock: 50,
-    genre: "RPG",
-    rating: 4.2,
-    releaseYear: 2023
+    name: "Super Mario Odyssey",
+    description: "Explore incredible places far from the Mushroom Kingdom as you join Mario and his new ally Cappy on a massive, globe-trotting 3D adventure.",
+    price: 3999,
+    image: "/Images/games/mario-odyssey.png",
+    category: "Nintendo",
+    platform: "Nintendo",
+    genre: "Platformer",
+    rating: 4.8,
+    stock: 65
   },
   {
     _id: "g8",
-    name: "Gears 5",
-    description: "From one of gaming's most acclaimed sagas, Gears is bigger than ever. With five thrilling modes and the deepest campaign yet.",
-    price: 2999,
-    image: "/Images/product-2.webp",
+    name: "Starfield",
+    description: "In this next generation role-playing game set amongst the stars, create any character you want and explore with unparalleled freedom.",
+    price: 4499,
+    image: "/Images/games/starfield.png",
     category: "Xbox",
-    stock: 40,
-    genre: "Shooter",
-    rating: 4.4,
-    releaseYear: 2019
+    platform: "Xbox",
+    genre: "RPG",
+    rating: 4.2,
+    stock: 40
   },
-
-  // Nintendo Games
   {
     _id: "g9",
-    name: "The Legend of Zelda: Tears of the Kingdom",
-    description: "An epic adventure across the land and skies of Hyrule awaits in this sequel to The Legend of Zelda: Breath of the Wild.",
-    price: 4999,
-    image: "/Images/product-3.webp",
-    category: "Nintendo",
-    stock: 70,
-    genre: "Adventure",
-    rating: 4.9,
-    releaseYear: 2023
+    name: "Cyberpunk 2077: Phantom Liberty",
+    description: "Phantom Liberty is a new spy-thriller adventure for Cyberpunk 2077. Return as cyber-enhanced mercenary V and embark on a mission of espionage.",
+    price: 2999,
+    image: "/Images/games/cyberpunk.png",
+    category: "PlayStation",
+    platform: "PlayStation",
+    genre: "RPG",
+    rating: 4.6,
+    stock: 35
   },
   {
     _id: "g10",
-    name: "Super Mario Odyssey",
-    description: "Join Mario on a massive, globe-trotting 3D adventure and use his incredible new abilities to collect Moons.",
-    price: 3999,
-    image: "/Images/product-3.webp",
-    category: "Nintendo",
-    stock: 65,
-    genre: "Platformer",
+    name: "Ghost of Tsushima Director's Cut",
+    description: "Uncover the hidden wonders of Tsushima in this open-world action adventure. Includes the Iki Island expansion and Legends online co-op mode.",
+    price: 3499,
+    image: "/Images/games/ghost-of-tsushima.png",
+    category: "PlayStation",
+    platform: "PlayStation",
+    genre: "Action-Adventure",
     rating: 4.8,
-    releaseYear: 2017
+    stock: 42
   },
   {
     _id: "g11",
-    name: "Splatoon 3",
-    description: "Enter the Splatlands, a sun-scorched desert inhabited by battle-hardened Inklings and Octolings.",
-    price: 3999,
-    image: "/Images/product-3.webp",
-    category: "Nintendo",
-    stock: 60,
-    genre: "Shooter",
-    rating: 4.3,
-    releaseYear: 2022
+    name: "Red Dead Redemption 2",
+    description: "Winner of over 175 Game of the Year Awards and recipient of over 250 perfect scores, RDR2 is an epic tale of outlaw life.",
+    price: 2499,
+    image: "/Images/games/rdr2.png",
+    category: "Xbox",
+    platform: "Xbox",
+    genre: "Action-Adventure",
+    rating: 4.9,
+    stock: 60
   },
   {
     _id: "g12",
-    name: "Animal Crossing: New Horizons",
-    description: "Escape to a deserted island and create your own paradise as you explore, create, and customize.",
-    price: 3999,
-    image: "/Images/product-3.webp",
+    name: "Mario Kart 8 Deluxe",
+    description: "Hit the road with the definitive version of Mario Kart 8 and play anytime, anywhere! Race your friends or battle them in a revised battle mode.",
+    price: 3699,
+    image: "/Images/games/mario-kart.png",
     category: "Nintendo",
-    stock: 75,
-    genre: "Simulation",
+    platform: "Nintendo",
+    genre: "Racing",
     rating: 4.7,
-    releaseYear: 2020
+    stock: 55
   },
+  {
+    _id: "g13",
+    name: "Horizon Forbidden West",
+    description: "Join Aloy as she braves the Forbidden West – a majestic but dangerous frontier that conceals mysterious new threats.",
+    price: 3999,
+    image: "/Images/games/horizon-fw.png",
+    category: "PlayStation",
+    platform: "PlayStation",
+    genre: "RPG",
+    rating: 4.7,
+    stock: 38
+  },
+  {
+    _id: "g14",
+    name: "Call of Duty: Modern Warfare III",
+    description: "In the direct sequel to the record-breaking Modern Warfare II, Captain Price and Task Force 141 face off against the ultimate threat.",
+    price: 5499,
+    image: "/Images/games/mw3.png",
+    category: "Xbox",
+    platform: "Xbox",
+    genre: "Shooter",
+    rating: 4.3,
+    stock: 75
+  },
+  {
+    _id: "g15",
+    name: "Animal Crossing: New Horizons",
+    description: "Escape to a deserted island and create your own paradise as you explore, create, and customize in the Animal Crossing: New Horizons game.",
+    price: 3499,
+    image: "/Images/games/animal-crossing.png",
+    category: "Nintendo",
+    platform: "Nintendo",
+    genre: "Simulation",
+    rating: 4.8,
+    stock: 45
+  },
+  {
+    _id: "g16",
+    name: "Resident Evil 4",
+    description: "Survival is just the beginning. Six years have passed since the biological disaster in Raccoon City. Leon S. Kennedy tracks the President's missing daughter.",
+    price: 3999,
+    image: "/Images/games/re4.png",
+    category: "PlayStation",
+    platform: "PlayStation",
+    genre: "Survival Horror",
+    rating: 4.9,
+    stock: 28
+  },
+  {
+    _id: "g17",
+    name: "Super Smash Bros. Ultimate",
+    description: "Gaming icons clash in the ultimate brawl you can play anytime, anywhere! Smash rivals off the stage as new characters Simon Belmont and King K. Rool join Inkling and Ridley.",
+    price: 3999,
+    image: "/Images/games/smash-bros.png",
+    category: "Nintendo",
+    platform: "Nintendo",
+    genre: "Action",
+    rating: 4.9,
+    stock: 50
+  },
+  {
+    _id: "g18",
+    name: "Gears 5",
+    description: "From one of gaming's most acclaimed sagas, Gears is bigger than ever, with five thrilling modes and the deepest campaign yet.",
+    price: 1999,
+    image: "/Images/games/gears-5.png",
+    category: "Xbox",
+    platform: "Xbox",
+    genre: "Shooter",
+    rating: 4.5,
+    stock: 30
+  }
 ];
 
 const genres = ["Action-Adventure", "RPG", "FPS", "Racing", "Platformer", "Simulation", "Shooter", "Survival Horror", "Action", "Adventure"];
@@ -192,28 +247,42 @@ const categories = ["PlayStation", "Xbox", "Nintendo"];
 export default function GamesPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState([0, 6000]);
+  const [priceRange, setPriceRange] = useState([0, 10000]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  
+  // Hardcoded data usage
+  const products = allGames;
 
   // Hero Button Logic
   const { addToCart } = useCartContext();
   const [heroAdded, setHeroAdded] = useState(false);
 
+  const heroProduct = useMemo(() => {
+    return products.find(p => p.name.includes("God of War")) || products[0];
+  }, [products]);
+
   const handleHeroBuy = () => {
-    addToCart(heroProduct, 1);
-    setHeroAdded(true);
-    setTimeout(() => setHeroAdded(false), 2000);
+    if (heroProduct) {
+        addToCart(heroProduct, 1);
+        setHeroAdded(true);
+        setTimeout(() => setHeroAdded(false), 2000);
+    }
   };
 
   // Filter Logic
   const filteredGames = useMemo(() => {
-    return allGames.filter((game) => {
-      const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(game.category);
-      const genreMatch = selectedGenres.length === 0 || selectedGenres.includes(game.genre);
+    return products.filter((game) => {
+      // NOTE: For hardcoded data, we use 'category' or 'platform' field. 
+      // The filter UI uses "PlayStation", "Xbox", "Nintendo".
+      // Our hardcoded data has matching 'category' strings.
+      const platformMatch = selectedCategories.length === 0 || (game.category && selectedCategories.includes(game.category));
+      
+      const genreMatch = selectedGenres.length === 0 || (game.genre && selectedGenres.includes(game.genre));
+      
       const priceMatch = game.price >= priceRange[0] && game.price <= priceRange[1];
-      return categoryMatch && genreMatch && priceMatch;
+      return platformMatch && genreMatch && priceMatch;
     });
-  }, [selectedCategories, selectedGenres, priceRange]);
+  }, [selectedCategories, selectedGenres, priceRange, products]);
 
   const toggleCategory = (cat: string) => {
     setSelectedCategories(prev => 
@@ -232,6 +301,7 @@ export default function GamesPage() {
       <SiteHeader />
 
       {/* Hero Section: Game Spotlight */}
+      {heroProduct && (
       <section className="relative h-[50vh] min-h-[400px] w-full overflow-hidden border-b border-border">
         {/* Adaptive Background Gradients */}
         <div className="absolute inset-0 bg-gradient-to-r from-purple-100 via-blue-50 to-background dark:from-purple-900/40 dark:via-blue-900/20 dark:to-zinc-950 z-0" />
@@ -245,10 +315,10 @@ export default function GamesPage() {
               GAME OF THE MONTH
             </Badge>
             <h1 className="text-5xl md:text-7xl font-black text-foreground italic tracking-tighter mb-4 drop-shadow-sm dark:drop-shadow-2xl">
-              GOD OF WAR <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">RAGNARÖK</span>
+              {heroProduct.name.toUpperCase()}
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-xl line-clamp-2 leading-relaxed">
-              The cycle of violence continues. Kratos and Atreus must journey to each of the Nine Realms in search of answers.
+              {heroProduct.description}
             </p>
             <div className="flex gap-4">
               <Button 
@@ -274,7 +344,7 @@ export default function GamesPage() {
                       width="100%" 
                       height="100%" 
                       src="https://www.youtube.com/embed/hfJ4Km46A-0?autoplay=1" 
-                      title="God of War Ragnarök Trailer" 
+                      title="Trailer" 
                       frameBorder="0" 
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                       allowFullScreen
@@ -287,6 +357,7 @@ export default function GamesPage() {
           </div>
         </div>
       </section>
+      )}
 
       <main className="container mx-auto px-4 py-8 md:py-12 flex-1">
         <div className="flex flex-col lg:flex-row gap-8">
@@ -386,8 +457,8 @@ export default function GamesPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredGames.map((game) => (
-                <div key={game._id} className="group relative animate-in fade-in zoom-in duration-500 fill-mode-backwards">
+              {filteredGames.map((game, index) => (
+                <div key={game._id} className="group relative animate-in fade-in zoom-in duration-500 fill-mode-backwards" style={{ animationDelay: `${index * 50}ms` }}>
                   {/* Decorative Glow - Softer in light mode */}
                   <div className={`absolute -inset-0.5 bg-gradient-to-r 
                     ${game.category === 'PlayStation' ? 'from-blue-600 to-indigo-600' : 
