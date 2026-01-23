@@ -1,22 +1,56 @@
 import { ProductsGrid } from "@/components/products-grid";
 import { ProductFilters } from "@/components/product-filters";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 
 export default function ShopPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground pt-24 pb-12">
-      <div className="container mx-auto px-6">
-        <h1 className="text-4xl font-bold mb-8">Shop All Products</h1>
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <SiteHeader />
+      
+      {/* Hero Section */}
+      <div className="bg-primary/5 border-b border-border/50 py-16 md:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background z-10" />
+        <div className="absolute inset-0 bg-[url('/Images/slide-1.webp')] opacity-10 bg-cover bg-center" />
+        <div className="container mx-auto px-6 relative z-20 text-center">
+          <h1 className="text-4xl md:text-6xl font-black mb-4 tracking-tight">
+            XP STORE <span className="text-primary">COLLECTION</span>
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Browse our curated selection of premium consoles, games, and accessories. 
+            Level up your setup with the best gear in the industry.
+          </p>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-6 py-12 flex-1">
         
-        <div className="flex flex-col md:flex-row gap-8">
-          <aside className="w-full md:w-64 shrink-0">
-            <ProductFilters />
+        {/* Breadcrumb & Sort Bar (Mobile hidden) */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-6 border-b border-border">
+           <div className="text-sm text-muted-foreground mb-4 md:mb-0">
+              <span className="hover:text-primary cursor-pointer">Home</span> <span className="mx-2">/</span> <span className="font-medium text-foreground">Shop</span>
+           </div>
+           <div className="text-sm font-medium">
+             Showing all products
+           </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-12">
+          {/* Sidebar - Filters */}
+          <aside className="w-full lg:w-72 shrink-0 space-y-8">
+            <div className="lg:sticky lg:top-24">
+               <ProductFilters />
+            </div>
           </aside>
           
-          <main className="flex-1">
+          {/* Main Content - Grid */}
+          <main className="flex-1 min-h-[600px]">
             <ProductsGrid />
           </main>
         </div>
       </div>
+      
+      <SiteFooter />
     </div>
   );
 }

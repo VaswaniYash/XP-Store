@@ -4,8 +4,10 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CartIcon } from './cart-icon';
 import { useEffect, useState } from 'react';
+import { useSession } from "next-auth/react";
 
 export function Navbar() {
+  const { data: session } = useSession();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
 
@@ -19,8 +21,11 @@ export function Navbar() {
       } catch (error) {
         console.error('Error parsing user data:', error);
       }
+    } else if (session?.user) {
+      setIsLoggedIn(true);
+      setUsername(session.user.name || session.user.email || 'User');
     }
-  }, []);
+  }, [session]);
 
   return (
     <nav className="border-b border-border bg-card/50 backdrop-blur sticky top-0 z-50">

@@ -24,12 +24,13 @@ import {
   Zap,
   Check
 } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState, useCallback } from "react";
 
 export default function ProductPage() {
   const { id } = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { addToCart, openCart } = useCartContext();
   const [isAdded, setIsAdded] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
@@ -79,6 +80,17 @@ export default function ProductPage() {
     setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
   }, [galleryImages.length]);
 
+  const getBackLink = () => {
+    const source = searchParams.get('source');
+    if (source === 'home') return { href: '/', label: 'Back to Home' };
+    
+    if (product?._id.startsWith('g')) return { href: '/games', label: 'Back to Games' };
+    if (product?._id.startsWith('a')) return { href: '/accessories', label: 'Back to Accessories' };
+    return { href: '/consoles', label: 'Back to Consoles' };
+  };
+
+  const backLink = getBackLink();
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
@@ -87,8 +99,8 @@ export default function ProductPage() {
         {/* Breadcrumb / Back */}
         <div className="mb-8">
            <BackButton 
-             onClick={() => router.push('/consoles')} 
-             label="Back to Consoles"
+             onClick={() => router.push(backLink.href)} 
+             label={backLink.label}
            />
         </div>
 

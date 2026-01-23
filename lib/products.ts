@@ -1,7 +1,7 @@
 import { Product } from "./types";
 
 export const products: Product[] = [
-    // PlayStation Products
+    // ==================== CONSOLES ====================
     {
         _id: "1",
         name: "PlayStation 5 Console",
@@ -56,8 +56,6 @@ export const products: Product[] = [
         category: "PlayStation",
         stock: 4
     },
-
-    // Xbox Products
     {
         _id: "2",
         name: "Xbox Series X",
@@ -112,8 +110,6 @@ export const products: Product[] = [
         category: "Xbox",
         stock: 8
     },
-
-    // Nintendo Products
     {
         _id: "3",
         name: "Nintendo Switch OLED",
@@ -167,5 +163,398 @@ export const products: Product[] = [
         image: "/Images/product-3.webp",
         category: "Nintendo",
         stock: 4
+    },
+
+    // ==================== GAMES ====================
+    {
+        _id: "g1",
+        name: "Elden Ring",
+        description: "Winner of Game of the Year. An expansive fantasy world created by Hidetaka Miyazaki and George R.R. Martin.",
+        price: 3999,
+        image: "/Images/games/elden-ring.png",
+        category: "PlayStation",
+        stock: 50
+    },
+    {
+        _id: "g2",
+        name: "God of War Ragnarök",
+        description: "The Santa Monica Studio presents the sequel to the critically acclaimed God of War (2018). Kratos and Atreus must journey to each of the Nine Realms.",
+        price: 4999,
+        image: "/Images/games/god-of-war.png",
+        category: "PlayStation",
+        stock: 45
+    },
+    {
+        _id: "g3",
+        name: "Halo Infinite",
+        description: "The legendary Halo series returns with the most expansive Master Chief campaign yet and a ground-breaking free to play multiplayer experience.",
+        price: 3999,
+        image: "/Images/games/halo-infinite.png",
+        category: "Xbox",
+        stock: 60
+    },
+    {
+        _id: "g4",
+        name: "The Legend of Zelda: Tears of the Kingdom",
+        description: "In this sequel to the Legend of Zelda: Breath of the Wild, you'll decide your own path through the sprawling landscapes of Hyrule.",
+        price: 4999,
+        image: "/Images/games/zelda-totk.png",
+        category: "Nintendo",
+        stock: 80
+    },
+    {
+        _id: "g5",
+        name: "Marvel's Spider-Man 2",
+        description: "Spider-Men Peter Parker and Miles Morales face the ultimate test of strength inside and outside the mask as they fight to save the city.",
+        price: 4999,
+        image: "/Images/games/spiderman-2.png",
+        category: "PlayStation",
+        stock: 50
+    },
+    {
+        _id: "g6",
+        name: "Forza Horizon 5",
+        description: "Your Ultimate Horizon Adventure awaits! Explore the vibrant and ever-evolving open world landscapes of Mexico with limitless, fun driving action.",
+        price: 3999,
+        image: "/Images/games/forza.png",
+        category: "Xbox",
+        stock: 55
+    },
+    {
+        _id: "g7",
+        name: "Super Mario Odyssey",
+        description: "Explore incredible places far from the Mushroom Kingdom as you join Mario and his new ally Cappy on a massive, globe-trotting 3D adventure.",
+        price: 3999,
+        image: "/Images/games/mario-odyssey.png",
+        category: "Nintendo",
+        stock: 65
+    },
+    {
+        _id: "g8",
+        name: "Starfield",
+        description: "In this next generation role-playing game set amongst the stars, create any character you want and explore with unparalleled freedom.",
+        price: 4499,
+        image: "/Images/games/starfield.png",
+        category: "Xbox",
+        stock: 40
+    },
+    {
+        _id: "g9",
+        name: "Cyberpunk 2077: Phantom Liberty",
+        description: "Phantom Liberty is a new spy-thriller adventure for Cyberpunk 2077. Return as cyber-enhanced mercenary V and embark on a mission of espionage.",
+        price: 2999,
+        image: "/Images/games/cyberpunk.png",
+        category: "PlayStation",
+        stock: 35
+    },
+    {
+        _id: "g10",
+        name: "Ghost of Tsushima Director's Cut",
+        description: "Uncover the hidden wonders of Tsushima in this open-world action adventure. Includes the Iki Island expansion and Legends online co-op mode.",
+        price: 3499,
+        image: "/Images/games/ghost-of-tsushima.png",
+        category: "PlayStation",
+        stock: 42
+    },
+    {
+        _id: "g11",
+        name: "Red Dead Redemption 2",
+        description: "Winner of over 175 Game of the Year Awards and recipient of over 250 perfect scores, RDR2 is an epic tale of outlaw life.",
+        price: 2499,
+        image: "/Images/games/rdr2.png",
+        category: "Xbox",
+        stock: 60
+    },
+    {
+        _id: "g12",
+        name: "Mario Kart 8 Deluxe",
+        description: "Hit the road with the definitive version of Mario Kart 8 and play anytime, anywhere! Race your friends or battle them in a revised battle mode.",
+        price: 3699,
+        image: "/Images/games/mario-kart.png",
+        category: "Nintendo",
+        stock: 55
+    },
+    {
+        _id: "g13",
+        name: "Horizon Forbidden West",
+        description: "Join Aloy as she braves the Forbidden West – a majestic but dangerous frontier that conceals mysterious new threats.",
+        price: 3999,
+        image: "/Images/games/horizon-fw.png",
+        category: "PlayStation",
+        stock: 38
+    },
+    {
+        _id: "g14",
+        name: "Call of Duty: Modern Warfare III",
+        description: "In the direct sequel to the record-breaking Modern Warfare II, Captain Price and Task Force 141 face off against the ultimate threat.",
+        price: 5499,
+        image: "/Images/games/mw3.png",
+        category: "Xbox",
+        stock: 75
+    },
+    {
+        _id: "g15",
+        name: "Animal Crossing: New Horizons",
+        description: "Escape to a deserted island and create your own paradise as you explore, create, and customize in the Animal Crossing: New Horizons game.",
+        price: 3499,
+        image: "/Images/games/animal-crossing.png",
+        category: "Nintendo",
+        stock: 45
+    },
+    {
+        _id: "g16",
+        name: "Resident Evil 4",
+        description: "Survival is just the beginning. Six years have passed since the biological disaster in Raccoon City. Leon S. Kennedy tracks the President's missing daughter.",
+        price: 3999,
+        image: "/Images/games/re4.png",
+        category: "PlayStation",
+        stock: 28
+    },
+    {
+        _id: "g17",
+        name: "Super Smash Bros. Ultimate",
+        description: "Gaming icons clash in the ultimate brawl you can play anytime, anywhere! Smash rivals off the stage as new characters Simon Belmont and King K. Rool join Inkling and Ridley.",
+        price: 3999,
+        image: "/Images/games/smash-bros.png",
+        category: "Nintendo",
+        stock: 50
+    },
+    {
+        _id: "g18",
+        name: "Gears 5",
+        description: "From one of gaming's most acclaimed sagas, Gears is bigger than ever, with five thrilling modes and the deepest campaign yet.",
+        price: 1999,
+        image: "/Images/games/gears-5.png",
+        category: "Xbox",
+        stock: 30
+    },
+
+    // ==================== ACCESSORIES ====================
+    // Controllers
+    {
+        _id: "a1",
+        name: "DualSense Wireless Controller - Cosmic Red",
+        description: "Experience haptic feedback and adaptive triggers in a stunning cosmic red finish. Compatible with PS5.",
+        price: 5999,
+        image: "/Images/accessories/controller.png",
+        category: "Controllers",
+        stock: 30
+    },
+    {
+        _id: "a2",
+        name: "Xbox Wireless Controller - Electric Volt",
+        description: "Textured grip, hybrid D-pad, and Bluetooth connectivity. Vibrant electric volt color for Xbox Series X|S and PC.",
+        price: 5499,
+        image: "/Images/accessories/controller.png",
+        category: "Controllers",
+        stock: 35
+    },
+    {
+        _id: "a3",
+        name: "Nintendo Switch Pro Controller",
+        description: "Premium controller with motion controls, HD rumble, and built-in amiibo functionality for Nintendo Switch.",
+        price: 5999,
+        image: "/Images/accessories/controller.png",
+        category: "Controllers",
+        stock: 25
+    },
+    {
+        _id: "a4",
+        name: "DualSense Charging Station",
+        description: "Charge up to two DualSense controllers simultaneously with this official PlayStation charging dock.",
+        price: 2499,
+        image: "/Images/accessories/charging.png",
+        category: "Controllers",
+        stock: 40
+    },
+
+    // Headsets
+    {
+        _id: "a5",
+        name: "PlayStation 5 Pulse 3D Wireless Headset",
+        description: "Fine-tuned for 3D Audio on PS5. Dual noise-cancelling microphones and up to 12 hours of wireless play.",
+        price: 8999,
+        image: "/Images/accessories/headset.png",
+        category: "Headsets",
+        stock: 20
+    },
+    {
+        _id: "a6",
+        name: "Xbox Wireless Headset",
+        description: "Supports spatial sound technologies including Windows Sonic, Dolby Atmos, and DTS Headphone:X.",
+        price: 8499,
+        image: "/Images/accessories/headset.png",
+        category: "Headsets",
+        stock: 22
+    },
+    {
+        _id: "a7",
+        name: "SteelSeries Arctis 7+ Wireless",
+        description: "Premium multi-platform gaming headset with 30+ hour battery life. Works with PlayStation, Xbox, Switch, and PC.",
+        price: 12999,
+        image: "/Images/accessories/headset.png",
+        category: "Headsets",
+        stock: 15
+    },
+    {
+        _id: "a8",
+        name: "HyperX Cloud II Gaming Headset",
+        description: "Legendary comfort and sound quality. 7.1 surround sound and noise-cancelling microphone.",
+        price: 7999,
+        image: "/Images/accessories/headset.png",
+        category: "Headsets",
+        stock: 28
+    },
+
+    // Storage
+    {
+        _id: "a9",
+        name: "Seagate 2TB Game Drive for PS5",
+        description: "Officially licensed external HDD for PS5. Store and play PS4 games, archive PS5 games.",
+        price: 6999,
+        image: "/Images/accessories/storage.png",
+        category: "Storage",
+        stock: 18
+    },
+    {
+        _id: "a10",
+        name: "WD_BLACK 1TB SSD for Xbox Series X|S",
+        description: "Officially licensed NVMe SSD expansion card. Plug and play, identical performance to internal storage.",
+        price: 14999,
+        image: "/Images/accessories/storage.png",
+        category: "Storage",
+        stock: 12
+    },
+    {
+        _id: "a11",
+        name: "SanDisk 512GB microSD for Nintendo Switch",
+        description: "Officially licensed microSDXC card. Transfer speeds up to 100MB/s for fast game loading.",
+        price: 4999,
+        image: "/Images/accessories/storage.png",
+        category: "Storage",
+        stock: 45
+    },
+    {
+        _id: "a12",
+        name: "Samsung 980 PRO 2TB NVMe SSD",
+        description: "Compatible with PS5 internal expansion. PCIe 4.0 speeds up to 7,000 MB/s. Includes heatsink.",
+        price: 18999,
+        image: "/Images/accessories/storage.png",
+        category: "Storage",
+        stock: 10
+    },
+
+    // Protection
+    {
+        _id: "a13",
+        name: "dbrand PS5 Darkplates",
+        description: "Premium matte black replacement panels for PS5. Precision-cut with perfect fit and finish.",
+        price: 4999,
+        image: "/Images/accessories/protection.png",
+        category: "Protection",
+        stock: 25
+    },
+    {
+        _id: "a14",
+        name: "Nintendo Switch OLED Screen Protector",
+        description: "Tempered glass screen protector with 9H hardness. Crystal clear with oleophobic coating.",
+        price: 999,
+        image: "/Images/accessories/protection.png",
+        category: "Protection",
+        stock: 60
+    },
+    {
+        _id: "a15",
+        name: "Nintendo Switch Carrying Case - Deluxe",
+        description: "Official Nintendo carrying case with game card slots and adjustable viewing stand.",
+        price: 1999,
+        image: "/Images/accessories/protection.png",
+        category: "Protection",
+        stock: 35
+    },
+    {
+        _id: "a16",
+        name: "Controller Skin Set - Carbon Fiber",
+        description: "Premium vinyl skins for PlayStation, Xbox, or Nintendo controllers. Easy application, no residue.",
+        price: 1499,
+        image: "/Images/accessories/protection.png",
+        category: "Protection",
+        stock: 50
+    },
+
+    // Charging
+    {
+        _id: "a17",
+        name: "PowerA Dual Charging Station for Xbox",
+        description: "Charge two Xbox controllers simultaneously. Includes two rechargeable battery packs.",
+        price: 2999,
+        image: "/Images/accessories/charging.png",
+        category: "Charging",
+        stock: 30
+    },
+    {
+        _id: "a18",
+        name: "Anker USB-C Cable 10ft - Gaming Edition",
+        description: "Braided USB-C cable for controllers and devices. 10ft length for comfortable gaming while charging.",
+        price: 1299,
+        image: "/Images/accessories/charging.png",
+        category: "Charging",
+        stock: 55
+    },
+    {
+        _id: "a19",
+        name: "Nintendo Switch Charging Dock",
+        description: "Compact charging dock for Nintendo Switch. Supports TV mode with HDMI output.",
+        price: 2499,
+        image: "/Images/accessories/charging.png",
+        category: "Charging",
+        stock: 28
+    },
+    {
+        _id: "a20",
+        name: "Multi-Console Charging Tower",
+        description: "Universal charging station for PlayStation, Xbox, and Nintendo controllers. LED indicators included.",
+        price: 3999,
+        image: "/Images/accessories/charging.png",
+        category: "Charging",
+        stock: 20
+    },
+
+    // Streaming
+    {
+        _id: "a21",
+        name: "Elgato HD60 S+ Capture Card",
+        description: "Stream and record in 1080p60 or 4K30 HDR10. Zero-lag passthrough for seamless gameplay.",
+        price: 16999,
+        image: "/Images/accessories/streaming.png",
+        category: "Streaming",
+        stock: 8
+    },
+    {
+        _id: "a22",
+        name: "Logitech C920 HD Pro Webcam",
+        description: "Full HD 1080p streaming camera. Perfect for streaming, video calls, and content creation.",
+        price: 6999,
+        image: "/Images/accessories/streaming.png",
+        category: "Streaming",
+        stock: 15
+    },
+    {
+        _id: "a23",
+        name: "Blue Yeti USB Microphone",
+        description: "Professional USB microphone for streaming and recording. Four pickup patterns for versatility.",
+        price: 10999,
+        image: "/Images/accessories/streaming.png",
+        category: "Streaming",
+        stock: 12
+    },
+    {
+        _id: "a24",
+        name: "Elgato Stream Deck",
+        description: "15 customizable LCD keys for controlling your stream. One-touch operation for scenes, media, and more.",
+        price: 12999,
+        image: "/Images/accessories/streaming.png",
+        category: "Streaming",
+        stock: 10
     },
 ];

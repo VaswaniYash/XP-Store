@@ -12,6 +12,7 @@ import { MagicCard } from "@/components/uiverse/magic-card";
 import { NeonButton } from "@/components/uiverse/neon-button";
 import { AnimatedTitle } from "@/components/anime/animated-title";
 import { useCartContext } from "@/components/cart-context";
+import { products } from "@/lib/products";
 
 export default function HomePage() {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -109,52 +110,20 @@ export default function HomePage() {
           <h2 className="text-3xl font-semibold mb-6 text-foreground">Best Sellers</h2>
           <p className="text-muted-foreground mb-10">Explore our most popular picks loved by gamers and collectors.</p>
 
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 h-[380px]">
-             {[
-              { 
-                _id: "bs1", 
-                name: "PS5 Console", 
-                description: "Experience lightning fast loading with an ultra-high speed SSD.",
-                price: 49999, 
-                image: "/Images/product-1.webp",
-                category: "Consoles",
-                stock: 10
-              },
-              { 
-                _id: "bs2", 
-                name: "Xbox Series X", 
-                description: "The fastest, most powerful Xbox ever.",
-                price: 49999,
-                image: "/Images/product-2.webp",
-                category: "Consoles",
-                stock: 15
-              },
-              { 
-                _id: "bs3", 
-                name: "Nintendo Switch", 
-                description: "Play loud, play proud, play anywhere.",
-                price: 29999,
-                image: "/Images/product-3.webp",
-                category: "Consoles",
-                stock: 20
-              },
-              { 
-                _id: "bs4", 
-                name: "Pro Gaming Headset", 
-                description: "Immersive sound for the competitive edge.",
-                price: 14999,
-                image: "/Images/product-4.webp",
-                category: "Accessories",
-                stock: 25
-              }
-            ].map((item) => (
-              <div key={item._id} className="h-full">
-                <MagicCard 
-                  title={item.name} 
-                  image={item.image}
-                  price={item.price}
-                  onAddToCart={() => addToCart(item, 1)}
-                />
+             {products
+               .filter(p => ["1", "2", "3", "a5"].includes(p._id))
+               .map((item) => (
+              <div key={item._id} className="h-full group">
+                <Link href={`/product/${item._id}?source=home`} className="block h-full cursor-pointer">
+                  <MagicCard 
+                    title={item.name} 
+                    image={item.image}
+                    price={item.price}
+                    onAddToCart={() => addToCart(item, 1)}
+                  />
+                </Link>
               </div>
             ))}
           </div>

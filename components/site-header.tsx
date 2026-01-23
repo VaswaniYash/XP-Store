@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useCartContext } from "@/components/cart-context"; // Import CartContext
+import { useSession, signOut } from "next-auth/react";
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -27,14 +28,18 @@ export function SiteHeader() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
+    await signOut({ redirect: false });
     window.location.reload();
   };
 
   // Check for logged in user
+  // Use NextAuth session
+  const { data: session } = useSession();
+
   useEffect(() => {
     const userStr = localStorage.getItem("user");
     if (userStr) {
@@ -43,8 +48,13 @@ export function SiteHeader() {
       } catch (e) {
         console.error("Failed to parse user data");
       }
+    } else if (session?.user) {
+      setUser({
+        name: session.user.name || "User",
+        email: session.user.email || "",
+      });
     }
-  }, []);
+  }, [session]);
 
   return (
     <>
@@ -257,20 +267,21 @@ export function SiteHeader() {
           )}
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border bg-background">
-          <div className="flex justify-between font-bold mb-3 text-foreground">
-            <span>Total</span>
-            <span className="text-primary text-xl">₹{total.toLocaleString()}</span>
+        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-border bg-gradient-to-t from-background via-background to-background/50 backdrop-blur-xl">
+          <div className="flex justify-between items-end font-bold mb-6 text-foreground">
+            <span className="text-muted-foreground font-medium">Total</span>
+            <span className="text-2xl tracking-tight text-primary">₹{total.toLocaleString()}</span>
           </div>
           <Link 
             href="/checkout"
-            className={`block w-full text-center py-3 rounded-lg font-medium transition-all shadow-lg ${
+            onClick={closeCart}
+            className={`block w-full text-center py-4 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:shadow-primary/30 active:scale-[0.98] ${
               items.length === 0 
                 ? "bg-muted text-muted-foreground cursor-not-allowed pointer-events-none" 
-                : "bg-primary text-white hover:bg-primary/90 shadow-primary/20 hover:shadow-primary/40"
+                : "bg-primary text-white hover:bg-primary/90"
             }`}
           >
-            Checkout
+            Checkout Securely
           </Link>
         </div>
       </div>

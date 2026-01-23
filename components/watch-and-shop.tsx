@@ -16,17 +16,17 @@ export function WatchAndShop() {
     {
       id: 1,
       thumbnail: "/video-console.png",
-      productLink: "/shop?category=consoles"
+      productLink: "/shop"
     },
     {
       id: 2,
       thumbnail: "/video-headset.png",
-      productLink: "/shop?category=accessories"
+      productLink: "/shop"
     },
     {
       id: 3,
       thumbnail: "/video-controller.png",
-      productLink: "/shop?category=accessories"
+      productLink: "/shop"
     }
   ];
 

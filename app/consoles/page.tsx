@@ -4,9 +4,12 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ProductCard } from "@/components/product-card";
 import { Product } from "@/lib/types";
-import { products as allConsoles } from "@/lib/products";
 import { useState, useEffect } from "react";
 import { Gamepad2, Tv, Zap, Trophy } from "lucide-react";
+
+import { products } from "@/lib/products";
+
+const allConsoles = products.filter(p => !p._id.startsWith('g') && !p._id.startsWith('a'));
 
 const categories = [
   { id: "All", label: "All Consoles", icon: Gamepad2 },

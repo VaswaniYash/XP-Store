@@ -3,7 +3,7 @@ import mongoose, { Schema, model, models } from "mongoose";
 const UserSchema = new Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: false },
     role: { type: String, default: "user" },
 }, { timestamps: true });
 
@@ -13,7 +13,12 @@ const ProductSchema = new Schema({
     price: { type: Number, required: true },
     image: { type: String, required: true },
     category: { type: String, required: true },
+    platform: { type: String },
+    brand: { type: String },
     stock: { type: Number, default: 0 },
+    rating: { type: Number, default: 0 },
+    reviews: { type: Number, default: 0 },
+    features: [{ type: String }],
 }, { timestamps: true });
 
 const OrderSchema = new Schema({
