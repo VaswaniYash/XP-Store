@@ -4,14 +4,24 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { useCartContext } from "@/components/cart-context"; // Import CartContext
+import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { useCartContext } from "@/components/providers/cart-context"; // Import CartContext
 import { useSession, signOut } from "next-auth/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   // Removed local cartOpen state
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [user, setUser] = useState<{ name: string; email: string; image?: string } | null>(null);
   const pathname = usePathname();
   
   // Use Cart Context
@@ -44,7 +54,8 @@ export function SiteHeader() {
     const userStr = localStorage.getItem("user");
     if (userStr) {
       try {
-        setUser(JSON.parse(userStr));
+        const userData = JSON.parse(userStr);
+        setUser(userData);
       } catch (e) {
         console.error("Failed to parse user data");
       }
@@ -52,6 +63,7 @@ export function SiteHeader() {
       setUser({
         name: session.user.name || "User",
         email: session.user.email || "",
+        image: session.user.image || undefined,
       });
     }
   }, [session]);
@@ -73,7 +85,14 @@ export function SiteHeader() {
             {user ? (
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-accent">
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  {user.image ? (
+                     <Avatar className="w-6 h-6">
+                        <AvatarImage src={user.image} alt={user.name} />
+                        <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                     </Avatar>
+                  ) : (
+                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  )}
                   <span className="text-xs font-medium max-w-[80px] truncate">{user.name}</span>
                 </div>
                 <button onClick={handleLogout} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-accent transition-colors" title="Logout">
@@ -141,7 +160,7 @@ export function SiteHeader() {
           </nav>
 
           <div className="flex items-center space-x-4">
-            <div className="flex items-center gap-2 border-r border-border pr-4 mr-2">
+            <div className="flex items-center gap-2 pr-2">
               <ThemeToggle />
               <Link href="/wishlist" className="p-2 hover:bg-accent rounded-full transition-colors text-muted-foreground hover:text-red-500">
                 <i className="ri-heart-line text-lg"></i>
@@ -155,21 +174,58 @@ export function SiteHeader() {
                 )}
               </button>
             </div>
+            
+            {/* Vertical Separator */}
+            <div className="h-8 w-px bg-border"></div>
 
             <div className="flex items-center gap-3">
               {user ? (
                 <>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent border border-border">
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <span className="text-sm font-medium">{user.name}</span>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="px-5 py-2 text-sm font-medium text-muted-foreground hover:text-destructive transition-colors flex items-center gap-2"
-                  >
-                    <i className="ri-logout-box-line text-lg"></i>
-                    Logout
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                        <Avatar className="h-10 w-10 border border-border">
+                          <AvatarImage src={user.image || "/placeholder-user.jpg"} alt={user.name} />
+                          <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-background rounded-full"></span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-72 p-2" align="end" sideOffset={8} forceMount>
+                      <DropdownMenuLabel className="font-normal p-2">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10 border border-border">
+                            <AvatarImage src={user.image || "/placeholder-user.jpg"} alt={user.name} />
+                            <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col space-y-1">
+                            <p className="text-base font-medium leading-none">{user.name}</p>
+                            <p className="text-xs leading-none text-muted-foreground break-all">
+                              {user.email}
+                            </p>
+                          </div>
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link href="/profile" className="cursor-pointer flex items-center gap-2">
+                          <i className="ri-user-line text-lg"></i>
+                          Profile
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                         <Link href="/profile?tab=orders" className="cursor-pointer flex items-center gap-2">
+                          <i className="ri-shopping-bag-3-line text-lg"></i>
+                          Orders
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleLogout} className="text-red-500 cursor-pointer flex items-center gap-2 focus:bg-red-500/10 focus:text-red-500">
+                        <i className="ri-logout-box-line text-lg"></i>
+                        Log out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </>
               ) : (
                 <>

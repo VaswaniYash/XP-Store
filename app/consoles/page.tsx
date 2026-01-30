@@ -1,8 +1,8 @@
 "use client";
 
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
-import { ProductCard } from "@/components/product-card";
+import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { ProductCard } from "@/components/products/product-card";
 import { Product } from "@/lib/types";
 import { useState, useEffect } from "react";
 import { Gamepad2, Tv, Zap, Trophy } from "lucide-react";

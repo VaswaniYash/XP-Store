@@ -1,0 +1,33 @@
+services:
+  # Service 1: Your Next.js App
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      # This is the MAGIC line. 
+      # "mongo" refers to the service name below, not "localhost"
+      - MONGO_URI=mongodb://mongo:27017/xpstore
+      - JWT_SECRET=4fcf06b4c3b142b796f2e9d4ad3db0af7e94e0a3c2ab47d38b8f4a13b440c812
+    depends_on:
+      - mongo
+    networks:
+      - mern-network
+
+  # Service 2: The Database
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db # This saves your data so it doesn't vanish on restart
+    networks:
+      - mern-network
+
+# Define the network and volume
+networks:
+  mern-network:
+
+
+volumes:
+  mongo-data:

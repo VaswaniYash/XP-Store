@@ -1,9 +1,11 @@
-import { ProductsGrid } from "@/components/products-grid";
-import { ProductFilters } from "@/components/product-filters";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { ProductsGrid } from "@/components/products/products-grid";
+import { ProductFilters } from "@/components/products/product-filters";
+import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
 
-export default function ShopPage() {
+import { Suspense } from "react";
+
+function ShopContent() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <SiteHeader />
@@ -52,5 +54,17 @@ export default function ShopPage() {
       
       <SiteFooter />
     </div>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+    }>
+      <ShopContent />
+    </Suspense>
   );
 }

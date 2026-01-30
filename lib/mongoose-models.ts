@@ -5,6 +5,10 @@ const UserSchema = new Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: false },
     role: { type: String, default: "user" },
+    phone: { type: String },
+    address: { type: String },
+    bio: { type: String },
+    image: { type: String },
 }, { timestamps: true });
 
 const ProductSchema = new Schema({
@@ -32,6 +36,13 @@ const OrderSchema = new Schema({
     status: { type: String, default: "pending" },
 }, { timestamps: true });
 
-export const User = models.User || model("User", UserSchema);
-export const Product = models.Product || model("Product", ProductSchema);
-export const Order = models.Order || model("Order", OrderSchema);
+// Prevent overwrite warning by deleting models if they exist (dev mode fix)
+if (process.env.NODE_ENV !== 'production') {
+    if (models.User) delete models.User;
+    if (models.Product) delete models.Product;
+    if (models.Order) delete models.Order;
+}
+
+export const User = model("User", UserSchema);
+export const Product = model("Product", ProductSchema);
+export const Order = model("Order", OrderSchema);

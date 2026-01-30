@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { ShoppingCart, Star } from 'lucide-react';
 import Link from 'next/link';
 import { Product } from '@/lib/types';
-import { useCartContext } from './cart-context';
+import { useCartContext } from '@/components/providers/cart-context';
 import { useState } from 'react';
 
 interface ProductCardProps {
