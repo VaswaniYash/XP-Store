@@ -1,8 +1,8 @@
 'use client';
 
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
-import { useCartContext } from "@/components/cart-context";
+import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { useCartContext } from "@/components/providers/cart-context";
 import { products } from "@/lib/products";
 import { PremiumButton } from "@/components/uiverse/premium-button";
 import { WishlistButton } from "@/components/uiverse/wishlist-button";

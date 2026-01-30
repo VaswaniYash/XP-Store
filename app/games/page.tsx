@@ -1,8 +1,8 @@
 "use client";
 
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
-import { ProductCard } from "@/components/product-card";
+import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { ProductCard } from "@/components/products/product-card";
 import { Product } from "@/lib/types";
 import { useState, useMemo } from "react";
 import { Slider } from "@/components/ui/slider";
@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Filter, SlidersHorizontal, Star, Trophy, Zap, PlayCircle } from "lucide-react";
-import { useCartContext } from "@/components/cart-context";
+import { useCartContext } from "@/components/providers/cart-context";
 
 // Extended Game Interface for local usage
 interface GameProduct extends Product {

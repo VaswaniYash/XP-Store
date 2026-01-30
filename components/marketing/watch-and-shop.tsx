@@ -15,7 +15,7 @@ export function WatchAndShop() {
   const videoProducts: VideoProduct[] = [
     {
       id: 1,
-      thumbnail: "/video-console.png",
+      thumbnail: "/Images/phone_images/hero_banner.webp",
       productLink: "/shop"
     },
     {

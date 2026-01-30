@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FeaturedProducts } from "@/components/featured-products";
-import { CustomerReviews } from "@/components/customer-reviews";
-import { WatchAndShop } from "@/components/watch-and-shop";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { FeaturedProducts } from "@/components/products/featured-products";
+import { CustomerReviews } from "@/components/marketing/customer-reviews";
+import { WatchAndShop } from "@/components/marketing/watch-and-shop";
+import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { GlitchButton } from "@/components/uiverse/glitch-button";
 import { MagicCard } from "@/components/uiverse/magic-card";
 import { NeonButton } from "@/components/uiverse/neon-button";
 import { AnimatedTitle } from "@/components/anime/animated-title";
-import { useCartContext } from "@/components/cart-context";
+import { useCartContext } from "@/components/providers/cart-context";
 import { products } from "@/lib/products";
 
 export default function HomePage() {

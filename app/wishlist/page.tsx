@@ -1,7 +1,7 @@
 'use client';
 
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { PremiumButton } from "@/components/uiverse/premium-button";
 import { 
   Trash2, 
@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { useCartContext } from "@/components/cart-context";
+import { useCartContext } from "@/components/providers/cart-context";
 import { products } from "@/lib/products"; // Using mock products for design
 
 export default function WishlistPage() {
