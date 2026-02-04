@@ -18,11 +18,19 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "XP Store | Ultimate Gaming Marketplace",
   description: "The best place to buy games, consoles, and accessories. Built by Yash Vaswani.",
-  // This helps social media sites know what image to show (optional but good)
   openGraph: {
     title: "XP Store | Ultimate Gaming Marketplace",
     description: "The best place to buy games, consoles, and accessories.",
     type: "website",
+    // Add this section 👇
+    images: [
+      {
+        url: "/thumbnail.png", // Make sure this file exists in your 'public' folder
+        width: 1200,
+        height: 630,
+        alt: "XP Store Preview",
+      },
+    ],
   },
 };
 
