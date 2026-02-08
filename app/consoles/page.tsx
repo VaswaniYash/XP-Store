@@ -1,10 +1,11 @@
 "use client";
 
+import React from "react";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { ProductCard } from "@/components/products/product-card";
 import { Product } from "@/lib/types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Gamepad2, Tv, Zap, Trophy } from "lucide-react";
 
 import { products } from "@/lib/products";
@@ -18,64 +19,77 @@ const categories = [
   { id: "Nintendo", label: "Nintendo", icon: Trophy },
 ];
 
+// Memoize banner configurations
+const bannerConfigs = {
+  PlayStation: {
+    image: "/Images/product-1.webp",
+    title: "PLAYSTATION 5",
+    subtitle: "Play Has No Limits",
+    description: "Experience the power of next-gen gaming with lightning-fast SSD, haptic feedback, and stunning 4K graphics.",
+    indicatorColor: "bg-blue-500",
+    bgGradient: "from-blue-600/90 via-blue-500/20 to-background dark:from-blue-950 dark:via-blue-900/40 dark:to-background"
+  },
+  Xbox: {
+    image: "/Images/product-2.webp",
+    title: "XBOX SERIES X",
+    subtitle: "Power Your Dreams",
+    description: "The fastest, most powerful Xbox ever. Play thousands of games across four generations with Game Pass.",
+    indicatorColor: "bg-green-500",
+    bgGradient: "from-green-600/90 via-green-500/20 to-background dark:from-green-950 dark:via-green-900/40 dark:to-background"
+  },
+  Nintendo: {
+    image: "/Images/product-3.webp",
+    title: "NINTENDO SWITCH",
+    subtitle: "Play Anytime, Anywhere",
+    description: "Play at home or on the go with the versatile Nintendo Switch. Experience gaming freedom like never before.",
+    indicatorColor: "bg-red-500",
+    bgGradient: "from-red-600/90 via-red-500/20 to-background dark:from-red-950 dark:via-red-900/40 dark:to-background"
+  },
+  All: {
+    image: "/Images/slide-1.webp",
+    title: "NEXT-GEN GAMING",
+    subtitle: "Choose Your Platform",
+    description: "Discover the ultimate gaming experiences with the latest hardware from PlayStation, Xbox, and Nintendo.",
+    indicatorColor: "bg-purple-500",
+    bgGradient: "from-purple-600/90 via-purple-500/20 to-background dark:from-purple-950 dark:via-background/80 dark:to-background"
+  }
+};
+
 export default function ConsolesPage() {
   const [filter, setFilter] = useState("All");
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // Throttled scroll handler
   useEffect(() => {
-    const handleScroll = () => {
+    let ticking = false;
+
+    const updateScrollState = () => {
       setIsScrolled(window.scrollY > 100);
+      ticking = false;
     };
-    window.addEventListener("scroll", handleScroll);
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollState);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const filteredConsoles = filter === "All" 
-    ? allConsoles 
-    : allConsoles.filter(c => c.category === filter);
+  // Memoized filtered consoles
+  const filteredConsoles = useMemo(() => {
+    return filter === "All" 
+      ? allConsoles 
+      : allConsoles.filter(c => c.category === filter);
+  }, [filter]);
 
-  const getBannerContent = () => {
-    switch(filter) {
-      case "PlayStation":
-        return {
-          image: "/Images/product-1.webp",
-          title: "PLAYSTATION 5",
-          subtitle: "Play Has No Limits",
-          description: "Experience the power of next-gen gaming with lightning-fast SSD, haptic feedback, and stunning 4K graphics.",
-          indicatorColor: "bg-blue-500",
-          bgGradient: "from-blue-600/90 via-blue-500/20 to-background dark:from-blue-950 dark:via-blue-900/40 dark:to-background"
-        };
-      case "Xbox":
-        return {
-          image: "/Images/product-2.webp",
-          title: "XBOX SERIES X",
-          subtitle: "Power Your Dreams",
-          description: "The fastest, most powerful Xbox ever. Play thousands of games across four generations with Game Pass.",
-          indicatorColor: "bg-green-500",
-          bgGradient: "from-green-600/90 via-green-500/20 to-background dark:from-green-950 dark:via-green-900/40 dark:to-background"
-        };
-      case "Nintendo":
-        return {
-          image: "/Images/product-3.webp",
-          title: "NINTENDO SWITCH",
-          subtitle: "Play Anytime, Anywhere",
-          description: "Play at home or on the go with the versatile Nintendo Switch. Experience gaming freedom like never before.",
-          indicatorColor: "bg-red-500",
-          bgGradient: "from-red-600/90 via-red-500/20 to-background dark:from-red-950 dark:via-red-900/40 dark:to-background"
-        };
-      default:
-        return {
-          image: "/Images/slide-1.webp",
-          title: "NEXT-GEN GAMING",
-          subtitle: "Choose Your Platform",
-          description: "Discover the ultimate gaming experiences with the latest hardware from PlayStation, Xbox, and Nintendo.",
-          indicatorColor: "bg-purple-500",
-          bgGradient: "from-purple-600/90 via-purple-500/20 to-background dark:from-purple-950 dark:via-background/80 dark:to-background"
-        };
-    }
-  };
-
-  const banner = getBannerContent();
+  // Memoized banner content
+  const banner = useMemo(() => {
+    return bannerConfigs[filter as keyof typeof bannerConfigs] || bannerConfigs.All;
+  }, [filter]);
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -91,7 +105,8 @@ export default function ConsolesPage() {
             <img 
               key={filter}
               src={banner.image} 
-              alt={banner.title} 
+              alt={banner.title}
+              loading="eager"
               className="w-full h-full object-cover object-center scale-105 animate-in fade-in duration-1000"
             />
           </div>
@@ -169,15 +184,7 @@ export default function ConsolesPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {filteredConsoles.map((item, index) => (
-              <div 
-                key={item._id} 
-                className="animate-in fade-in slide-in-from-bottom-8 duration-700 fill-mode-backwards"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="h-full transform transition-all duration-300 hover:-translate-y-2">
-                  <ProductCard product={item} />
-                </div>
-              </div>
+              <ConsoleCardWrapper key={item._id} item={item} index={index} />
             ))}
           </div>
 
@@ -197,3 +204,17 @@ export default function ConsolesPage() {
     </div>
   );
 }
+
+// Memoized console card wrapper to prevent unnecessary re-renders
+const ConsoleCardWrapper = React.memo(({ item, index }: { item: Product; index: number }) => (
+  <div 
+    className="animate-in fade-in slide-in-from-bottom-8 duration-700 fill-mode-backwards"
+    style={{ animationDelay: `${index * 100}ms` }}
+  >
+    <div className="h-full transform transition-all duration-300 hover:-translate-y-2">
+      <ProductCard product={item} />
+    </div>
+  </div>
+));
+
+ConsoleCardWrapper.displayName = 'ConsoleCardWrapper';

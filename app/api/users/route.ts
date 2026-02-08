@@ -126,3 +126,65 @@ export async function PUT(req: Request) {
     );
   }
 }
+
+export async function DELETE() {
+  try {
+    await connectDB();
+
+    let userId;
+    const token = await getAuthToken();
+
+    if (token) {
+      const payload = await verifyToken(token);
+      if (!payload || typeof payload === 'string' || !payload.id) {
+        return NextResponse.json(
+          { success: false, message: 'Invalid token' },
+          { status: 401 }
+        );
+      }
+      userId = payload.id;
+    } else {
+      const session = await auth();
+      if (session?.user?.email) {
+        const user = await User.findOne({ email: session.user.email });
+        if (user) {
+          userId = user._id;
+        }
+      }
+    }
+
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // Delete the user
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    console.log("DELETE /api/users - Deleted user:", deletedUser.email);
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Account deleted successfully'
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error deleting account:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to delete account' },
+      { status: 500 }
+    );
+  }
+}
+

@@ -1,7 +1,23 @@
+"use client";
+
 import Link from "next/link";
 import { Facebook, Instagram, Twitter, Github, Gamepad2 } from "lucide-react";
+import { Globe } from "@/components/ui/globe";
+import { useRef, useState } from "react";
 
 export function SiteFooter() {
+  const textContainerRef = useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+  const [isHovering, setIsHovering] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!textContainerRef.current) return;
+    const rect = textContainerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setMousePos({ x, y });
+  };
+
   return (
     <footer className="bg-background border-t border-border relative overflow-hidden mt-20">
       {/* Decorative gradient */}
@@ -37,7 +53,7 @@ export function SiteFooter() {
             <h3 className="font-bold mb-4 text-foreground">Support</h3>
              <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link href="#" className="hover:text-primary transition-colors">Order Status</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors">Shipping & Returns</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">Shipping &amp; Returns</Link></li>
               <li><Link href="#" className="hover:text-primary transition-colors">FAQ</Link></li>
               <li><Link href="#" className="hover:text-primary transition-colors">Contact Us</Link></li>
             </ul>
@@ -63,6 +79,44 @@ export function SiteFooter() {
              <p className="text-xs text-muted-foreground">
               Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.
             </p>
+          </div>
+        </div>
+
+        {/* ===== FULL-WIDTH VISUAL SECTION ===== */}
+        <div className="relative flex flex-row items-end justify-start w-full -mt-16 mb-8 overflow-visible select-none">
+          {/* Globe on the left */}
+          <div className="relative z-10 flex-shrink-0">
+            <Globe className="w-80 h-80 md:w-96 md:h-96 opacity-100 transition-opacity" />
+          </div>
+          
+          {/* Text centered with cursor-following light effect */}
+          <div 
+            ref={textContainerRef}
+            className="relative flex-1 flex items-center justify-center pb-8 md:pb-16 rounded-2xl overflow-hidden"
+            onMouseMove={handleMouseMove}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+          >
+            {/* Bento/Tech Grid Background */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:20px_20px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_40%,transparent_100%)] pointer-events-none" />
+            
+            {/* Base visible text - darker and more visible */}
+            <h1 className="text-[4rem] sm:text-[6rem] md:text-[8rem] lg:text-[10rem] xl:text-[12rem] leading-none font-black uppercase tracking-wide whitespace-nowrap z-10 text-zinc-800 dark:text-zinc-700 opacity-50 transition-opacity duration-300">
+              XP STORE
+            </h1>
+            
+            {/* Overlay text - Fully colored but revealed only by mask */}
+            {/* This ensures NO box background, as the background is clipped to text and mask hides the rest */}
+            <h1 
+              className="absolute text-[4rem] sm:text-[6rem] md:text-[8rem] lg:text-[10rem] xl:text-[12rem] leading-none font-black uppercase tracking-wide whitespace-nowrap z-20 pointer-events-none transition-opacity duration-300 text-transparent bg-clip-text bg-gradient-to-b from-cyan-400 to-blue-600"
+              style={{
+                opacity: isHovering ? 1 : 0,
+                WebkitMaskImage: `radial-gradient(300px circle at ${mousePos.x}% ${mousePos.y}%, black 20%, transparent 100%)`,
+                maskImage: `radial-gradient(300px circle at ${mousePos.x}% ${mousePos.y}%, black 20%, transparent 100%)`,
+              }}
+            >
+              XP STORE
+            </h1>
           </div>
         </div>
 
