@@ -73,9 +73,7 @@ export default function HomePage() {
               Your ultimate marketplace for consoles, accessories & premium game titles.
             </p>
             <div className="flex justify-center">
-              <div className="w-48">
-                <GlitchButton text="SHOP NOW" href="/shop" />
-              </div>
+              <GlitchButton text="SHOP NOW" href="/shop" />
             </div>
           </div>
         </div>

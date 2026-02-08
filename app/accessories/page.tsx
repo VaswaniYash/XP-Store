@@ -1,10 +1,11 @@
 "use client";
 
+import React from "react";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { ProductCard } from "@/components/products/product-card";
 import { Product } from "@/lib/types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { 
   Gamepad2, 
   Headphones, 
@@ -27,7 +28,7 @@ const allAccessories: Product[] = [
     name: "DualSense Wireless Controller - Cosmic Red",
     description: "Experience haptic feedback and adaptive triggers in a stunning cosmic red finish. Compatible with PS5.",
     price: 5999,
-    image: "/Images/accessories/controller.png",
+    image: "/Images/accessories/dualsense-cosmic-red.png",
     category: "Controllers",
     stock: 30
   },
@@ -36,7 +37,7 @@ const allAccessories: Product[] = [
     name: "Xbox Wireless Controller - Electric Volt",
     description: "Textured grip, hybrid D-pad, and Bluetooth connectivity. Vibrant electric volt color for Xbox Series X|S and PC.",
     price: 5499,
-    image: "/Images/accessories/controller.png",
+    image: "/Images/accessories/xbox-electric-volt.png",
     category: "Controllers",
     stock: 35
   },
@@ -45,7 +46,7 @@ const allAccessories: Product[] = [
     name: "Nintendo Switch Pro Controller",
     description: "Premium controller with motion controls, HD rumble, and built-in amiibo functionality for Nintendo Switch.",
     price: 5999,
-    image: "/Images/accessories/controller.png",
+    image: "/Images/accessories/switch-pro-controller.png",
     category: "Controllers",
     stock: 25
   },
@@ -54,7 +55,7 @@ const allAccessories: Product[] = [
     name: "DualSense Charging Station",
     description: "Charge up to two DualSense controllers simultaneously with this official PlayStation charging dock.",
     price: 2499,
-    image: "/Images/accessories/charging.png",
+    image: "/Images/accessories/dualsense-charging-station.png",
     category: "Controllers",
     stock: 40
   },
@@ -65,7 +66,7 @@ const allAccessories: Product[] = [
     name: "PlayStation 5 Pulse 3D Wireless Headset",
     description: "Fine-tuned for 3D Audio on PS5. Dual noise-cancelling microphones and up to 12 hours of wireless play.",
     price: 8999,
-    image: "/Images/accessories/headset.png",
+    image: "/Images/accessories/ps5-pulse-headset.png",
     category: "Headsets",
     stock: 20
   },
@@ -74,7 +75,7 @@ const allAccessories: Product[] = [
     name: "Xbox Wireless Headset",
     description: "Supports spatial sound technologies including Windows Sonic, Dolby Atmos, and DTS Headphone:X.",
     price: 8499,
-    image: "/Images/accessories/headset.png",
+    image: "/Images/accessories/xbox-wireless-headset.png",
     category: "Headsets",
     stock: 22
   },
@@ -83,7 +84,7 @@ const allAccessories: Product[] = [
     name: "SteelSeries Arctis 7+ Wireless",
     description: "Premium multi-platform gaming headset with 30+ hour battery life. Works with PlayStation, Xbox, Switch, and PC.",
     price: 12999,
-    image: "/Images/accessories/headset.png",
+    image: "/Images/accessories/arctis-headset.png",
     category: "Headsets",
     stock: 15
   },
@@ -92,7 +93,7 @@ const allAccessories: Product[] = [
     name: "HyperX Cloud II Gaming Headset",
     description: "Legendary comfort and sound quality. 7.1 surround sound and noise-cancelling microphone.",
     price: 7999,
-    image: "/Images/accessories/headset.png",
+    image: "/Images/accessories/hyperx-cloud-headset.png",
     category: "Headsets",
     stock: 28
   },
@@ -103,7 +104,7 @@ const allAccessories: Product[] = [
     name: "Seagate 2TB Game Drive for PS5",
     description: "Officially licensed external HDD for PS5. Store and play PS4 games, archive PS5 games.",
     price: 6999,
-    image: "/Images/accessories/storage.png",
+    image: "/Images/accessories/seagate-ps5-drive.png",
     category: "Storage",
     stock: 18
   },
@@ -112,7 +113,7 @@ const allAccessories: Product[] = [
     name: "WD_BLACK 1TB SSD for Xbox Series X|S",
     description: "Officially licensed NVMe SSD expansion card. Plug and play, identical performance to internal storage.",
     price: 14999,
-    image: "/Images/accessories/storage.png",
+    image: "/Images/accessories/wd-black-xbox-ssd.png",
     category: "Storage",
     stock: 12
   },
@@ -121,7 +122,7 @@ const allAccessories: Product[] = [
     name: "SanDisk 512GB microSD for Nintendo Switch",
     description: "Officially licensed microSDXC card. Transfer speeds up to 100MB/s for fast game loading.",
     price: 4999,
-    image: "/Images/accessories/storage.png",
+    image: "/Images/accessories/sandisk-microsd-switch.png",
     category: "Storage",
     stock: 45
   },
@@ -130,7 +131,7 @@ const allAccessories: Product[] = [
     name: "Samsung 980 PRO 2TB NVMe SSD",
     description: "Compatible with PS5 internal expansion. PCIe 4.0 speeds up to 7,000 MB/s. Includes heatsink.",
     price: 18999,
-    image: "/Images/accessories/storage.png",
+    image: "/Images/accessories/samsung-980-ssd.png",
     category: "Storage",
     stock: 10
   },
@@ -141,7 +142,7 @@ const allAccessories: Product[] = [
     name: "dbrand PS5 Darkplates",
     description: "Premium matte black replacement panels for PS5. Precision-cut with perfect fit and finish.",
     price: 4999,
-    image: "/Images/accessories/protection.png",
+    image: "/Images/accessories/dbrand-ps5-darkplates.png",
     category: "Protection",
     stock: 25
   },
@@ -150,7 +151,7 @@ const allAccessories: Product[] = [
     name: "Nintendo Switch OLED Screen Protector",
     description: "Tempered glass screen protector with 9H hardness. Crystal clear with oleophobic coating.",
     price: 999,
-    image: "/Images/accessories/protection.png",
+    image: "/Images/accessories/switch-screen-protector.png",
     category: "Protection",
     stock: 60
   },
@@ -271,55 +272,74 @@ const categoryGradients: Record<string, string> = {
 export default function AccessoriesPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const scrollingRef = useRef(false);
+
+  // Memoized filtered products for search
+  const filteredProducts = useMemo(() => {
+    if (!searchQuery) return null;
+    const query = searchQuery.toLowerCase();
+    return allAccessories.filter(p => 
+      p.name.toLowerCase().includes(query) || 
+      p.description.toLowerCase().includes(query) ||
+      p.category.toLowerCase().includes(query)
+    );
+  }, [searchQuery]);
+
+  // Memoized category products
+  const categoryProducts = useMemo(() => {
+    const grouped: Record<string, Product[]> = {};
+    categories.forEach(cat => {
+      grouped[cat.id] = allAccessories.filter(p => p.category === cat.id);
+    });
+    return grouped;
+  }, []);
 
   // Scroll to section function
-  const scrollToSection = (id: string) => {
+  const scrollToSection = useCallback((id: string) => {
     setActiveCategory(id);
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
-  };
+  }, []);
 
-  // Set active category on scroll
+  // Optimized scroll handler with requestAnimationFrame
   useEffect(() => {
-    const handleScroll = () => {
-      // 1. Check if we've reached the bottom of the page (activate last item)
-      if (
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 100
-      ) {
+    let ticking = false;
+
+    const updateActiveCategory = () => {
+      const scrollPosition = window.scrollY + 150;
+      
+      // Check if at bottom
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100) {
         setActiveCategory(categories[categories.length - 1].id);
+        ticking = false;
         return;
       }
 
-      // 2. Standard spy logic
-      const scrollPosition = window.scrollY + 150; // Trigger line 150px from top
-
-      // If we are at the very top, clear active if needed, or keep first default?
-      // Actually, keeping the first one active if we are near top is often better UX.
-      if (window.scrollY < 50) {
-        // Optional: setActiveCategory(null) or "Controllers"
-      }
-
+      // Find active section
       for (const cat of categories) {
         const element = document.getElementById(cat.id);
         if (element) {
           const { offsetTop, offsetHeight } = element;
-          // offsetTop is the position of the element relative to the document
-          // scrollPosition is the current "scanner line" position
-          if (
-            scrollPosition >= offsetTop &&
-            scrollPosition < offsetTop + offsetHeight
-          ) {
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
             setActiveCategory(cat.id);
             break;
           }
         }
       }
+      
+      ticking = false;
     };
 
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateActiveCategory);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -370,7 +390,7 @@ export default function AccessoriesPage() {
                 >
                   <div className={cn(
                     "p-2 rounded-lg transition-colors",
-                    activeCategory === cat.id ? "bg-secondary text-white" : "bg-muted group-hover:bg-white inset-0" 
+                    activeCategory === cat.id ? "bg-secondary text-white" : "bg-muted group-hover:bg-white/10" 
                   )}>
                     <cat.icon className={cn("w-4 h-4", activeCategory === cat.id ? "text-white" : "text-muted-foreground")} />
                   </div>
@@ -425,7 +445,8 @@ export default function AccessoriesPage() {
               <img 
                 src="/Images/accessories/hero.png" 
                 alt="Accessories Hero" 
-                className="absolute right-0 top-0 h-full w-2/3 object-cover opacity-20 mask-image-linear-gradient-to-l" 
+                loading="lazy"
+                className="absolute right-0 top-0 h-full w-2/3 object-cover opacity-20" 
               />
               <div className="relative z-20 max-w-2xl">
                 <h1 className="text-4xl md:text-6xl font-black tracking-tighter mb-4 text-foreground">
@@ -438,7 +459,7 @@ export default function AccessoriesPage() {
                   <div className="flex -space-x-3">
                     {[1,2,3,4].map(i => (
                       <div key={i} className="w-10 h-10 rounded-full border-2 border-background bg-secondary flex items-center justify-center text-xs font-bold text-foreground">
-                        <img src={`/Images/product-${i > 3 ? 1 : i}.webp`} className="w-full h-full object-cover rounded-full opacity-70" />
+                        <img src={`/Images/product-${i > 3 ? 1 : i}.webp`} className="w-full h-full object-cover rounded-full opacity-70" loading="lazy" alt="" />
                       </div>
                     ))}
                   </div>
@@ -449,7 +470,6 @@ export default function AccessoriesPage() {
               </div>
             </div>
 
-            {/* Sections */}
             {/* Sections or Search Results */}
             {searchQuery ? (
               <section className="animate-in fade-in duration-300">
@@ -460,29 +480,18 @@ export default function AccessoriesPage() {
                    <div>
                      <h2 className="text-3xl font-bold tracking-tight">Search Results</h2>
                      <p className="text-muted-foreground text-sm mt-1">
-                       Found {allAccessories.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.description.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase())).length} matches for "{searchQuery}"
+                       Found {filteredProducts?.length || 0} matches for "{searchQuery}"
                      </p>
                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-                  {allAccessories
-                    .filter(p => 
-                      p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                      p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      p.category.toLowerCase().includes(searchQuery.toLowerCase())
-                    )
-                    .map((product) => (
-                    <div key={product._id} className="group relative animate-in fade-in zoom-in duration-500 fill-mode-backwards">
-                      <div className={`absolute -inset-0.5 bg-gradient-to-r ${categoryGradients[product.category] || 'from-primary to-secondary'} rounded-xl opacity-0 group-hover:opacity-70 blur transition duration-500`} />
-                      <div className="relative h-full">
-                        <ProductCard product={product} />
-                      </div>
-                    </div>
+                  {filteredProducts?.map((product) => (
+                    <ProductCardWrapper key={product._id} product={product} />
                   ))}
                 </div>
                 
-                {allAccessories.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.description.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                {filteredProducts?.length === 0 && (
                   <div className="text-center py-20 bg-muted/20 rounded-3xl border border-dashed border-border">
                     <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
                     <h3 className="text-xl font-bold text-muted-foreground">No matches found</h3>
@@ -499,8 +508,8 @@ export default function AccessoriesPage() {
               </section>
             ) : (
               categories.map((cat) => {
-                const categoryProducts = allAccessories.filter(p => p.category === cat.id);
-                if (categoryProducts.length === 0) return null;
+                const products = categoryProducts[cat.id];
+                if (!products || products.length === 0) return null;
   
                 return (
                   <section key={cat.id} id={cat.id} className="scroll-mt-32">
@@ -512,7 +521,7 @@ export default function AccessoriesPage() {
                         <div>
                           <h2 className="text-3xl font-bold tracking-tight">{cat.label}</h2>
                           <p className="text-muted-foreground text-sm mt-1">
-                            {categoryProducts.length} items available
+                            {products.length} items available
                           </p>
                         </div>
                       </div>
@@ -522,13 +531,8 @@ export default function AccessoriesPage() {
                     </div>
   
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-                      {categoryProducts.map((product) => (
-                        <div key={product._id} className="group relative animate-in fade-in zoom-in duration-500 fill-mode-backwards">
-                          <div className={`absolute -inset-0.5 bg-gradient-to-r ${categoryGradients[product.category] || 'from-primary to-secondary'} rounded-xl opacity-0 group-hover:opacity-70 blur transition duration-500`} />
-                          <div className="relative h-full">
-                            <ProductCard product={product} />
-                          </div>
-                        </div>
+                      {products.map((product) => (
+                        <ProductCardWrapper key={product._id} product={product} />
                       ))}
                     </div>
                   </section>
@@ -552,3 +556,15 @@ export default function AccessoriesPage() {
     </div>
   );
 }
+
+// Memoized product card wrapper component
+const ProductCardWrapper = React.memo(({ product }: { product: Product }) => (
+  <div className="group relative">
+    <div className={`absolute -inset-0.5 bg-gradient-to-r ${categoryGradients[product.category] || 'from-primary to-secondary'} rounded-xl opacity-0 group-hover:opacity-70 blur transition duration-500`} />
+    <div className="relative h-full">
+      <ProductCard product={product} />
+    </div>
+  </div>
+));
+
+ProductCardWrapper.displayName = 'ProductCardWrapper';

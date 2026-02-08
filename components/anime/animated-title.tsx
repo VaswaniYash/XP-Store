@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 // @ts-ignore
-import { animate, stagger } from "animejs";
+import { animate } from "animejs";
 
 interface AnimatedTitleProps {
   text: string;
@@ -13,33 +13,28 @@ export const AnimatedTitle: React.FC<AnimatedTitleProps> = ({ text, className })
   const containerRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
-    // Ensure spans are ready
-    const targets = containerRef.current?.querySelectorAll(".letter");
-    if (targets && targets.length > 0) {
-      animate(targets, {
-        translateY: [-20, 0], 
+    if (containerRef.current) {
+      animate(containerRef.current, {
+        translateY: [40, 0],
         opacity: [0, 1],
-        filter: ['blur(10px)', 'blur(0px)'],
+        filter: ['blur(8px)', 'blur(0px)'],
+        textShadow: [
+          '0 0 30px rgba(6, 182, 212, 0.8), 0 0 60px rgba(6, 182, 212, 0.4)',
+          '0 0 0px rgba(6, 182, 212, 0)'
+        ],
         easing: "easeOutExpo",
-        duration: 1200,
-        delay: stagger(30, { start: 300 })
+        duration: 1400,
       });
     }
   }, [text]);
 
-  const letters = text.split("");
-
   return (
-    <h1 className={`relative inline-block ${className}`} ref={containerRef} aria-label={text}>
-      {letters.map((char, index) => (
-        <span 
-          key={index} 
-          className="letter inline-block opacity-0"
-          style={{ minWidth: char === ' ' ? '0.3em' : 'auto' }}
-        >
-          {char === ' ' ? '\u00A0' : char}
-        </span>
-      ))}
+    <h1 
+      className={`relative inline-block opacity-0 ${className}`} 
+      ref={containerRef} 
+      aria-label={text}
+    >
+      {text}
     </h1>
   );
 };
