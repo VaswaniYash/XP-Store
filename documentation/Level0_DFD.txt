@@ -1,0 +1,87 @@
+XP Store — Level 0 Data Flow Diagram (Context Diagram)
+=======================================================
+
+
+MERMAID CODE (Simplified)
+=========================
+
+graph TD
+    CUSTOMER["👤 Customer"]
+    GOOGLE["🔐 Google OAuth"]
+    MONGODB[("🗄️ MongoDB")]
+    LOCAL["💾 localStorage"]
+
+    XP(("🎮 XP STORE"))
+
+    CUSTOMER -- "Credentials / Profile Data" --> XP
+    XP -- "Auth Token / User Profile" --> CUSTOMER
+
+    CUSTOMER -- "Browse & Filter Products" --> XP
+    XP -- "Product Catalog" --> CUSTOMER
+
+    CUSTOMER -- "Cart & Order Actions" --> XP
+    XP -- "Cart State / Order Confirmation" --> CUSTOMER
+
+    GOOGLE -- "OAuth Token & User Info" --> XP
+    XP -- "OAuth Callback" --> GOOGLE
+
+    XP -- "Read/Write Users & Orders" --> MONGODB
+    MONGODB -- "Query Results" --> XP
+
+    XP -- "Persist Cart" --> LOCAL
+    LOCAL -- "Restore Cart" --> XP
+
+    style XP fill:#6366f1,stroke:#4f46e5,color:#fff,stroke-width:3px
+    style CUSTOMER fill:#10b981,stroke:#059669,color:#fff
+    style GOOGLE fill:#ea4335,stroke:#d33426,color:#fff
+    style MONGODB fill:#4db33d,stroke:#3a9a2e,color:#fff
+    style LOCAL fill:#f59e0b,stroke:#d97706,color:#fff
+
+
+TEXT DESCRIPTION
+================
+
+EXTERNAL ENTITIES
+-----------------
+1. Customer       — End user who browses, shops, and manages their account
+2. Google OAuth   — Identity provider for social login
+3. MongoDB        — Persistent database (users, orders collections)
+4. localStorage   — Browser-side cart persistence
+
+CENTRAL SYSTEM
+--------------
+XP Store — Next.js gaming e-commerce platform (consoles, games, accessories)
+
+DATA FLOWS
+----------
+Inbound:
+  - Credentials / Profile Data    (Customer -> XP Store)
+  - Browse & Filter Products      (Customer -> XP Store)
+  - Cart & Order Actions          (Customer -> XP Store)
+  - OAuth Token & User Info       (Google -> XP Store)
+  - Restore Cart                  (localStorage -> XP Store)
+
+Outbound:
+  - Auth Token / User Profile          (XP Store -> Customer)
+  - Product Catalog                    (XP Store -> Customer)
+  - Cart State / Order Confirmation    (XP Store -> Customer)
+  - OAuth Callback                     (XP Store -> Google)
+  - Read/Write Users & Orders          (XP Store -> MongoDB)
+  - Persist Cart                       (XP Store -> localStorage)
+
+
+API ENDPOINTS
+-------------
+Endpoint                     | Method | Flow
+-----------------------------|--------|---------------------------
+/api/auth/register           | POST   | Registration -> JWT Token
+/api/auth/login              | POST   | Login -> JWT Token
+/api/auth/[...nextauth]      | *      | Google OAuth flow
+/api/auth/logout             | POST   | Session termination
+/api/products                | GET    | Product Catalog
+/api/products/[id]           | GET    | Product Details
+/api/orders                  | GET    | Order History
+/api/orders/create           | POST   | Place Order
+/api/users                   | GET    | Get Profile
+/api/users                   | PUT    | Update Profile
+/api/users                   | DELETE | Delete Account

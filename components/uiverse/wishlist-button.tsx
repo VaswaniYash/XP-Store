@@ -3,21 +3,28 @@
 import React, { useState } from "react";
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useWishlistContext } from "@/components/providers/wishlist-context";
+import { Product } from "@/lib/types";
 
 interface WishlistButtonProps {
+  product: Product;
   className?: string;
 }
 
-export const WishlistButton: React.FC<WishlistButtonProps> = ({ className }) => {
-  const [liked, setLiked] = useState(false);
+export const WishlistButton: React.FC<WishlistButtonProps> = ({ product, className }) => {
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlistContext();
   const [animating, setAnimating] = useState(false);
+
+  const liked = isInWishlist(product._id);
 
   const handleClick = () => {
     if (!liked) {
       setAnimating(true);
       setTimeout(() => setAnimating(false), 600); // 600ms animation
+      addToWishlist(product);
+    } else {
+      removeFromWishlist(product._id);
     }
-    setLiked(!liked);
   };
 
   return (

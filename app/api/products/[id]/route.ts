@@ -2,6 +2,36 @@ import { connectDB } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { Product } from '@/lib/mongoose-models';
 
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  try {
+    await connectDB();
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return NextResponse.json(
+        { success: false, message: 'Product not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, data: product },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Fetch error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to fetch product' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

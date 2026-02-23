@@ -1,0 +1,130 @@
+XP Store — Level 1 Data Flow Diagram
+======================================
+
+
+MERMAID CODE
+============
+
+graph TD
+    %% External Entities
+    CUSTOMER["👤 Customer"]
+    GOOGLE["🔐 Google OAuth"]
+
+    %% Data Stores
+    D1[("D1: Users Collection")]
+    D2[("D2: Orders Collection")]
+    D3[["D3: Product Data<br/>(Static)"]]
+    D4[["D4: localStorage<br/>(Cart)"]]
+
+    %% Processes
+    P1(["1.0 Authentication<br/>& User Mgmt"])
+    P2(["2.0 Product<br/>Catalog"])
+    P3(["3.0 Cart<br/>Management"])
+    P4(["4.0 Order<br/>Processing"])
+
+    %% Customer -> Processes
+    CUSTOMER -- "Credentials" --> P1
+    P1 -- "Auth Token / Profile" --> CUSTOMER
+
+    CUSTOMER -- "Browse & Filter" --> P2
+    P2 -- "Product Listings" --> CUSTOMER
+
+    CUSTOMER -- "Add/Remove Items" --> P3
+    P3 -- "Cart State & Total" --> CUSTOMER
+
+    CUSTOMER -- "Place Order" --> P4
+    P4 -- "Order Confirmation" --> CUSTOMER
+
+    %% Google -> Auth
+    GOOGLE -- "OAuth Token" --> P1
+    P1 -- "OAuth Callback" --> GOOGLE
+
+    %% Processes -> Data Stores
+    P1 -- "Create/Read/Update User" --> D1
+    D1 -- "User Record" --> P1
+
+    P2 -- "Query Products" --> D3
+    D3 -- "Filtered Products" --> P2
+
+    P3 -- "Save Cart" --> D4
+    D4 -- "Restore Cart" --> P3
+
+    P4 -- "Create Order" --> D2
+    D2 -- "Order History" --> P4
+    P4 -- "Validate User" --> D1
+
+    %% Inter-Process Flows
+    P3 -- "Cart Items for Checkout" --> P4
+    P2 -- "Product Details" --> P3
+
+    %% Styling
+    style P1 fill:#6366f1,stroke:#4f46e5,color:#fff,stroke-width:2px
+    style P2 fill:#3b82f6,stroke:#2563eb,color:#fff,stroke-width:2px
+    style P3 fill:#f59e0b,stroke:#d97706,color:#fff,stroke-width:2px
+    style P4 fill:#10b981,stroke:#059669,color:#fff,stroke-width:2px
+    style CUSTOMER fill:#64748b,stroke:#475569,color:#fff
+    style GOOGLE fill:#ea4335,stroke:#d33426,color:#fff
+    style D1 fill:#4db33d,stroke:#3a9a2e,color:#fff
+    style D2 fill:#4db33d,stroke:#3a9a2e,color:#fff
+    style D3 fill:#8b5cf6,stroke:#7c3aed,color:#fff
+    style D4 fill:#ec4899,stroke:#db2777,color:#fff
+
+
+TEXT DESCRIPTION
+================
+
+PROCESSES
+---------
+Process | Name                        | Responsibility
+--------|-----------------------------|-----------------------------------------
+1.0     | Authentication & User Mgmt  | Register, login (JWT), Google OAuth,
+        |                             | profile CRUD, account deletion
+2.0     | Product Catalog             | Browse, filter, sort, paginate products
+        |                             | from static data source
+3.0     | Cart Management             | Add/remove/update cart items,
+        |                             | persist to localStorage, compute totals
+4.0     | Order Processing            | Create orders, validate user,
+        |                             | calculate totals, retrieve order history
+
+DATA STORES
+-----------
+ID  | Name              | Type             | Contents
+----|-------------------|------------------|----------------------------
+D1  | Users Collection  | MongoDB          | name, email, password, role,
+    |                   |                  | phone, address, bio, image
+D2  | Orders Collection | MongoDB          | userId, items[], total, status
+D3  | Product Data      | Static (in-code) | 50+ products with name, price,
+    |                   |                  | image, category, stock
+D4  | localStorage      | Browser          | Cart items as JSON array
+
+INTER-PROCESS DATA FLOWS
+-------------------------
+From -> To            | Data                  | Description
+----------------------|-----------------------|----------------------------
+2.0 -> 3.0            | Product Details       | Product info when adding to cart
+3.0 -> 4.0            | Cart Items            | Cart contents at checkout
+4.0 -> D1             | Validate User         | Verify userId exists before order
+
+EXTERNAL ENTITY INTERACTIONS
+-----------------------------
+Entity        | Process | Inbound                | Outbound
+--------------|---------|------------------------|------------------------
+Customer      | 1.0     | Credentials            | Auth Token / Profile
+Customer      | 2.0     | Browse & Filter        | Product Listings
+Customer      | 3.0     | Add/Remove Items       | Cart State & Total
+Customer      | 4.0     | Place Order            | Order Confirmation
+Google OAuth  | 1.0     | OAuth Token            | OAuth Callback
+
+API ENDPOINT MAPPING
+--------------------
+Process | Endpoint                    | Method
+--------|-----------------------------|--------
+1.0     | /api/auth/register          | POST
+1.0     | /api/auth/login             | POST
+1.0     | /api/auth/[...nextauth]     | *
+1.0     | /api/auth/logout            | POST
+1.0     | /api/users                  | GET/PUT/DELETE
+2.0     | /api/products               | GET
+2.0     | /api/products/[id]          | GET
+4.0     | /api/orders                 | GET
+4.0     | /api/orders/create          | POST

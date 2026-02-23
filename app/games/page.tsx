@@ -375,7 +375,7 @@ export default function GamesPage() {
             lg:w-1/4 space-y-8
             ${showMobileFilters ? 'block' : 'hidden lg:block'}
           `}>
-            <div className="sticky top-24 bg-white/80 dark:bg-zinc-900/50 p-6 rounded-2xl border border-border dark:border-border/50 backdrop-blur-xl shadow-lg dark:shadow-sm">
+            <div className="sticky top-24 bg-card p-6 rounded-2xl border border-border shadow-lg">
               <div className="flex items-center gap-2 mb-6">
                 <Filter className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                 <h3 className="font-bold text-lg">Filters</h3>
@@ -395,7 +395,7 @@ export default function GamesPage() {
                       />
                       <Label 
                         htmlFor={`cat-${cat}`} 
-                        className="text-foreground/80 group-hover:text-foreground cursor-pointer transition-colors"
+                        className="text-sm font-medium text-foreground/80 group-hover:text-foreground cursor-pointer transition-colors"
                       >
                         {cat}
                       </Label>
@@ -436,7 +436,7 @@ export default function GamesPage() {
                         onCheckedChange={() => toggleGenre(genre)}
                         className="border-zinc-300 dark:border-muted-foreground/30 data-[state=checked]:bg-purple-600"
                       />
-                      <Label htmlFor={`genre-${genre}`} className="text-xs text-foreground/70 cursor-pointer truncated hover:text-foreground transition-colors">
+                      <Label htmlFor={`genre-${genre}`} className="text-sm font-medium text-foreground/80 cursor-pointer hover:text-foreground transition-colors">
                         {genre}
                       </Label>
                     </div>

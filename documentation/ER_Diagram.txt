@@ -1,0 +1,138 @@
+XP Store — Entity-Relationship Diagram
+========================================
+
+Overview
+--------
+The XP Store uses MongoDB (via Mongoose) with three persisted collections and several client-side data structures.
+
+
+ER DIAGRAM (Mermaid Syntax)
+===========================
+
+erDiagram
+    USER {
+        ObjectId _id PK
+        String name "required"
+        String email "required, unique"
+        String password "optional (null for OAuth)"
+        String role "default: user"
+        String phone "optional"
+        String address "optional"
+        String bio "optional"
+        String image "optional (profile photo)"
+        Date createdAt "auto"
+        Date updatedAt "auto"
+    }
+
+    PRODUCT {
+        ObjectId _id PK
+        String name "required"
+        String description "required"
+        Number price "required (INR paise)"
+        String image "required"
+        String category "required"
+        String platform "optional"
+        String brand "optional"
+        Number stock "default: 0"
+        Number rating "default: 0"
+        Number reviews "default: 0"
+        Array features "String[]"
+        Date createdAt "auto"
+        Date updatedAt "auto"
+    }
+
+    ORDER {
+        ObjectId _id PK
+        ObjectId userId FK "ref: User, required"
+        Number total "required"
+        String status "default: pending"
+        Date createdAt "auto"
+        Date updatedAt "auto"
+    }
+
+    ORDER_ITEM {
+        ObjectId productId FK "ref: Product, required"
+        Number quantity "required"
+        Number price "required (snapshot)"
+    }
+
+    CART_ITEM {
+        String _id FK "derived from Product"
+        String name "from Product"
+        Number price "from Product"
+        String image "from Product"
+        String category "from Product"
+        Number quantity "user-defined"
+    }
+
+    SESSION {
+        String user_name "from auth provider"
+        String user_email "from auth provider"
+        String user_image "from auth provider"
+    }
+
+    USER ||--o{ ORDER : "places"
+    ORDER ||--|{ ORDER_ITEM : "contains"
+    PRODUCT ||--o{ ORDER_ITEM : "referenced in"
+    PRODUCT ||--o{ CART_ITEM : "added to cart"
+    USER ||--o| SESSION : "authenticates"
+
+
+ENTITY DETAILS
+==============
+
+Database Entities (MongoDB / Mongoose)
+--------------------------------------
+Entity        | Collection          | Source File
+-----------   | ------------------- | -------------------------------------------
+USER          | users               | lib/mongoose-models.ts (lines 3-12)
+PRODUCT       | products            | lib/mongoose-models.ts (lines 14-26)
+ORDER         | orders              | lib/mongoose-models.ts (lines 28-37)
+ORDER_ITEM    | embedded in Order   | lib/mongoose-models.ts (lines 30-34)
+
+Client-Side Entities (localStorage / React state)
+--------------------------------------------------
+Entity        | Storage                  | Source File
+-----------   | ------------------------ | -------------------------------------------
+CART_ITEM     | localStorage('cart')     | hooks/use-cart.ts + lib/types.ts (lines 18-20)
+SESSION       | NextAuth session cookie  | lib/auth.ts
+
+
+RELATIONSHIP SUMMARY
+=====================
+
+Relationship            | Type          | Enforcement      | Notes
+----------------------- | ------------- | ---------------- | ----------------------------------------
+USER -> ORDER           | One-to-Many   | DB (FK: userId)  | User places many orders
+ORDER -> ORDER_ITEM     | One-to-Many   | DB (embedded)    | Order contains line items
+PRODUCT -> ORDER_ITEM   | One-to-Many   | DB (FK: productId)| Product referenced in order items
+PRODUCT -> CART_ITEM    | One-to-Many   | Client-side only | Product added to cart (localStorage)
+USER -> SESSION         | One-to-One    | Auth layer       | Via NextAuth (Google OAuth or credentials)
+
+
+CATEGORY TAXONOMY
+=================
+
+Product
+├── Consoles
+│   ├── PlayStation
+│   ├── Xbox
+│   └── Nintendo
+├── Games
+│   ├── PlayStation
+│   ├── Xbox
+│   └── Nintendo
+└── Accessories
+    ├── Controllers
+    ├── Headsets
+    ├── Storage
+    ├── Protection
+    ├── Charging
+    └── Streaming
+
+
+NOTE
+====
+The Wishlist feature currently uses mock data (first 4 products from the static list) 
+and has no backend persistence. It is managed entirely in React component state and 
+does not have a dedicated entity/collection.

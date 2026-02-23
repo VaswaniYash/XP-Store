@@ -11,23 +11,12 @@ import {
   PackageX
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useWishlistContext } from "@/components/providers/wishlist-context";
 import { useCartContext } from "@/components/providers/cart-context";
-import { products } from "@/lib/products"; // Using mock products for design
 
 export default function WishlistPage() {
   const { addToCart, openCart } = useCartContext();
-  // Mocking internal state for now since we don't have a global wishlist context yet
-  // We'll take the first 4 products as "wishlisted" items for the demo
-  const [wishlistItems, setWishlistItems] = useState(products.slice(0, 4));
-
-  const removeFromWishlist = (id: string) => {
-    setWishlistItems((items) => items.filter((item) => item._id !== id));
-  };
-
-  const clearWishlist = () => {
-    setWishlistItems([]);
-  };
+  const { wishlistItems, removeFromWishlist, clearWishlist } = useWishlistContext();
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">

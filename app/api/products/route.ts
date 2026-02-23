@@ -18,9 +18,38 @@ export async function GET(request: NextRequest) {
       filteredProducts = filteredProducts.filter(p => p.category.toLowerCase() === platform.toLowerCase());
     }
 
+    // Filter by Genre (Mock data doesn't have genre property, so we map known terms to title keywords)
+    if (genre) {
+      const g = genre.toLowerCase();
+      const genreKeywords: Record<string, string[]> = {
+        'action rpg': ['elden ring', 'cyberpunk', 'halo'], // Adding halo for mock purposes
+        'first-person shooter': ['halo', 'call of duty'],
+        'action-adventure': ['god of war', 'zelda', 'spider-man', 'ghost of tsushima', 'red dead', 'horizon', 'resident evil', 'gears'],
+        'platformer': ['mario odyssey', 'smash bros'],
+        'rpg': ['starfield', 'elden ring', 'cyberpunk']
+      };
+
+      const keywords = genreKeywords[g] || [];
+      if (keywords.length > 0) {
+        filteredProducts = filteredProducts.filter(p => {
+          const lowerName = p.name.toLowerCase();
+          return keywords.some(keyword => lowerName.includes(keyword));
+        });
+      }
+    }
+
     // Filter by Category if explicitly passed
     if (category) {
-      filteredProducts = filteredProducts.filter(p => p.category.toLowerCase() === category.toLowerCase());
+      const lowerCat = category.toLowerCase();
+      if (lowerCat === 'consoles') {
+        filteredProducts = filteredProducts.filter(p => !p._id.startsWith('a') && !p._id.startsWith('g'));
+      } else if (lowerCat === 'accessories') {
+        filteredProducts = filteredProducts.filter(p => p._id.startsWith('a'));
+      } else if (lowerCat === 'games') {
+        filteredProducts = filteredProducts.filter(p => p._id.startsWith('g'));
+      } else {
+        filteredProducts = filteredProducts.filter(p => p.category.toLowerCase() === lowerCat);
+      }
     }
 
     // Sort

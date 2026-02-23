@@ -4,6 +4,7 @@ import "./globals.css";
 import { CartProvider } from "@/components/providers/cart-context";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SessionProvider } from "@/components/providers/session-provider";
+import { WishlistProvider } from "@/components/providers/wishlist-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,7 +60,9 @@ export default function RootLayout({
             storageKey="xp-store-theme"
           >
             <CartProvider>
-              {children}
+              <WishlistProvider>
+                {children}
+              </WishlistProvider>
             </CartProvider>
           </ThemeProvider>
         </SessionProvider>

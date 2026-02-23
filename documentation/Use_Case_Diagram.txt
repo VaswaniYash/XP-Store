@@ -1,0 +1,80 @@
+XP Store — Use Case Diagram
+============================
+
+
+MERMAID CODE
+============
+
+graph TB
+    GUEST["👤 Guest"] --> UC1(["Register"])
+    GUEST --> UC2(["Login"])
+    GUEST --> UC5(["Browse Products"])
+    GUEST --> UC7(["View Product"])
+
+    GOOGLE["🔐 Google OAuth"] -.-> UC3(["Google Login"])
+    UC3 -.->|"extend"| UC2
+
+    USER["👤 Registered User"] --> UC4(["Logout"])
+    USER --> UC5
+    USER --> UC7
+    USER --> UC8(["Manage Cart"])
+    USER --> UC9(["Place Order"])
+    USER --> UC10(["Order History"])
+    USER --> UC11(["Manage Profile"])
+    USER --> UC12(["Delete Account"])
+    USER --> UC13(["Manage Wishlist"])
+
+    UC6(["Filter & Sort"]) -.->|"extend"| UC5
+
+    UC8 -.->|"include"| AUTH{{"Authenticate"}}
+    UC9 -.->|"include"| AUTH
+    UC10 -.->|"include"| AUTH
+    UC11 -.->|"include"| AUTH
+    UC12 -.->|"include"| AUTH
+
+    style GUEST fill:#94a3b8,stroke:#64748b,color:#fff
+    style USER fill:#10b981,stroke:#059669,color:#fff
+    style GOOGLE fill:#ea4335,stroke:#d33426,color:#fff
+    style AUTH fill:#ef4444,stroke:#dc2626,color:#fff
+
+
+TEXT DESCRIPTION
+================
+
+ACTORS
+------
+Actor             | Type      | Description
+------------------|-----------|-------------------------------------------
+Guest             | Primary   | Unauthenticated visitor
+Registered User   | Primary   | Logged-in user (email or Google)
+Google OAuth      | Secondary | External identity provider
+
+USE CASES
+---------
+ID   | Use Case         | Actor(s)       | API Endpoint
+-----|------------------|----------------|-----------------------------
+UC1  | Register         | Guest          | POST /api/auth/register
+UC2  | Login            | Guest          | POST /api/auth/login
+UC3  | Google Login     | Guest, Google  | /api/auth/[...nextauth]
+UC4  | Logout           | User           | POST /api/auth/logout
+UC5  | Browse Products  | Guest, User    | GET /api/products
+UC6  | Filter & Sort    | Guest, User    | GET /api/products?params
+UC7  | View Product     | Guest, User    | GET /api/products/[id]
+UC8  | Manage Cart      | User           | Client-side (localStorage)
+UC9  | Place Order      | User           | POST /api/orders/create
+UC10 | Order History    | User           | GET /api/orders?userId=
+UC11 | Manage Profile   | User           | GET/PUT /api/users
+UC12 | Delete Account   | User           | DELETE /api/users
+UC13 | Manage Wishlist  | User           | Client-side (React state)
+
+RELATIONSHIPS
+-------------
+Type      | From            | To               | Reason
+----------|-----------------|------------------|---------------------------
+include   | Manage Cart     | Authenticate     | Must be logged in
+include   | Place Order     | Authenticate     | Must be logged in
+include   | Order History   | Authenticate     | Must be logged in
+include   | Manage Profile  | Authenticate     | Must be logged in
+include   | Delete Account  | Authenticate     | Must be logged in
+extend    | Google Login    | Login            | Optional OAuth path
+extend    | Filter & Sort   | Browse Products  | Optional refinement

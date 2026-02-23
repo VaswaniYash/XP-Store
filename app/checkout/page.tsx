@@ -21,7 +21,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 export default function CheckoutPage() {
-  const { items, total, itemCount } = useCartContext();
+  const { items, total, itemCount, clearCart } = useCartContext(); // ADD clearCart
   const router = useRouter();
   const { data: session } = useSession();
   const [step, setStep] = useState<'shipping' | 'payment'>('shipping');
@@ -36,6 +36,7 @@ export default function CheckoutPage() {
   });
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState('');
 
   // Auto-fill user data if logged in
   useEffect(() => {
@@ -60,14 +61,46 @@ export default function CheckoutPage() {
   const shippingCost = total > 5000 ? 0 : 500;
   const grandTotal = total + shippingCost;
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     setIsProcessing(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsProcessing(false);
-      // Navigate to success page (to be implemented)
-      alert("Order successfully placed!");
-    }, 2000);
+    setError('');
+    
+    try {
+        const payload = {
+            items,
+            total: grandTotal,
+            shippingAddress: {
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                address: formData.address,
+                city: formData.city,
+                zip: formData.zip,
+                email: formData.email
+            },
+            paymentMethod,
+            guestEmail: formData.email
+        };
+
+        const res = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            clearCart();
+            router.push(`/checkout/success?orderId=${data.data.orderId}&awb=${data.data.awb}`);
+        } else {
+            setError(data.message || 'Failed to place order');
+            setIsProcessing(false);
+        }
+    } catch (err) {
+        console.error(err);
+        setError('An unexpected error occurred. Please try again.');
+        setIsProcessing(false);
+    }
   };
 
   return (
@@ -211,6 +244,12 @@ export default function CheckoutPage() {
                      </div>
                   </div>
                 </div>
+                
+                {error && (
+                  <div className="bg-red-500/10 border border-red-500/50 text-red-500 rounded-lg p-4 mt-2 text-sm font-medium">
+                    {error}
+                  </div>
+                )}
 
                 <div className="pt-2">
                   <PremiumButton 

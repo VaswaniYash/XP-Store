@@ -160,7 +160,7 @@ const allAccessories: Product[] = [
     name: "Nintendo Switch Carrying Case - Deluxe",
     description: "Official Nintendo carrying case with game card slots and adjustable viewing stand.",
     price: 1999,
-    image: "/Images/accessories/protection.png",
+    image: "/Images/accessories/switch-carrying-case.png",
     category: "Protection",
     stock: 35
   },
@@ -169,7 +169,7 @@ const allAccessories: Product[] = [
     name: "Controller Skin Set - Carbon Fiber",
     description: "Premium vinyl skins for PlayStation, Xbox, or Nintendo controllers. Easy application, no residue.",
     price: 1499,
-    image: "/Images/accessories/protection.png",
+    image: "/Images/accessories/controller-skin-carbon.png",
     category: "Protection",
     stock: 50
   },
@@ -180,7 +180,7 @@ const allAccessories: Product[] = [
     name: "PowerA Dual Charging Station for Xbox",
     description: "Charge two Xbox controllers simultaneously. Includes two rechargeable battery packs.",
     price: 2999,
-    image: "/Images/accessories/charging.png",
+    image: "/Images/accessories/xbox-charging-station.png",
     category: "Charging",
     stock: 30
   },
@@ -189,7 +189,7 @@ const allAccessories: Product[] = [
     name: "Anker USB-C Cable 10ft - Gaming Edition",
     description: "Braided USB-C cable for controllers and devices. 10ft length for comfortable gaming while charging.",
     price: 1299,
-    image: "/Images/accessories/charging.png",
+    image: "/Images/accessories/usbc-cable.png",
     category: "Charging",
     stock: 55
   },
@@ -198,7 +198,7 @@ const allAccessories: Product[] = [
     name: "Nintendo Switch Charging Dock",
     description: "Compact charging dock for Nintendo Switch. Supports TV mode with HDMI output.",
     price: 2499,
-    image: "/Images/accessories/charging.png",
+    image: "/Images/accessories/switch-charging-dock.png",
     category: "Charging",
     stock: 28
   },
@@ -207,7 +207,7 @@ const allAccessories: Product[] = [
     name: "Multi-Console Charging Tower",
     description: "Universal charging station for PlayStation, Xbox, and Nintendo controllers. LED indicators included.",
     price: 3999,
-    image: "/Images/accessories/charging.png",
+    image: "/Images/accessories/multi-charging-tower.png",
     category: "Charging",
     stock: 20
   },
@@ -218,7 +218,7 @@ const allAccessories: Product[] = [
     name: "Elgato HD60 S+ Capture Card",
     description: "Stream and record in 1080p60 or 4K30 HDR10. Zero-lag passthrough for seamless gameplay.",
     price: 16999,
-    image: "/Images/accessories/streaming.png",
+    image: "/Images/accessories/elgato-capture-card.png",
     category: "Streaming",
     stock: 8
   },
@@ -227,7 +227,7 @@ const allAccessories: Product[] = [
     name: "Logitech C920 HD Pro Webcam",
     description: "Full HD 1080p streaming camera. Perfect for streaming, video calls, and content creation.",
     price: 6999,
-    image: "/Images/accessories/streaming.png",
+    image: "/Images/accessories/logitech-webcam.png",
     category: "Streaming",
     stock: 15
   },
@@ -236,7 +236,7 @@ const allAccessories: Product[] = [
     name: "Blue Yeti USB Microphone",
     description: "Professional USB microphone for streaming and recording. Four pickup patterns for versatility.",
     price: 10999,
-    image: "/Images/accessories/streaming.png",
+    image: "/Images/accessories/blue-yeti-mic.png",
     category: "Streaming",
     stock: 12
   },
@@ -245,7 +245,7 @@ const allAccessories: Product[] = [
     name: "Elgato Stream Deck",
     description: "15 customizable LCD keys for controlling your stream. One-touch operation for scenes, media, and more.",
     price: 12999,
-    image: "/Images/accessories/streaming.png",
+    image: "/Images/accessories/elgato-stream-deck.png",
     category: "Streaming",
     stock: 10
   },

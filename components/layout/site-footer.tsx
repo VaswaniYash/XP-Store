@@ -52,7 +52,7 @@ export function SiteFooter() {
           <div>
             <h3 className="font-bold mb-4 text-foreground">Support</h3>
              <ul className="space-y-3 text-sm text-muted-foreground">
-              <li><Link href="#" className="hover:text-primary transition-colors">Order Status</Link></li>
+              <li><Link href="/track" className="hover:text-primary transition-colors">Order Status</Link></li>
               <li><Link href="#" className="hover:text-primary transition-colors">Shipping &amp; Returns</Link></li>
               <li><Link href="#" className="hover:text-primary transition-colors">FAQ</Link></li>
               <li><Link href="#" className="hover:text-primary transition-colors">Contact Us</Link></li>
@@ -72,7 +72,7 @@ export function SiteFooter() {
               <a href="#" className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary hover:bg-secondary hover:text-secondary-foreground transition-all duration-300">
                 <Facebook className="w-5 h-5" />
               </a>
-               <a href="#" className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary hover:bg-secondary hover:text-secondary-foreground transition-all duration-300">
+               <a href="https://github.com/VaswaniYash-" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary hover:bg-secondary hover:text-secondary-foreground transition-all duration-300">
                 <Github className="w-5 h-5" />
               </a>
             </div>

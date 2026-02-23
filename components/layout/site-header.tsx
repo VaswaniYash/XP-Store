@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { useCartContext } from "@/components/providers/cart-context"; // Import CartContext
+import { useWishlistContext } from "@/components/providers/wishlist-context";
 import { useSession, signOut } from "next-auth/react";
 import {
   DropdownMenu,
@@ -26,6 +27,7 @@ export function SiteHeader() {
   
   // Use Cart Context
   const { items, itemCount, total, removeFromCart, updateQuantity, isCartOpen, openCart, closeCart } = useCartContext();
+  const { wishlistItems } = useWishlistContext();
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
   const closeMenu = () => setMenuOpen(false);
@@ -162,8 +164,13 @@ export function SiteHeader() {
           <div className="flex items-center space-x-4">
             <div className="flex items-center gap-2 pr-2">
               <ThemeToggle />
-              <Link href="/wishlist" className="p-2 hover:bg-accent rounded-full transition-colors text-muted-foreground hover:text-red-500">
+              <Link href="/wishlist" className="p-2 hover:bg-accent rounded-full transition-colors text-muted-foreground hover:text-red-500 relative">
                 <i className="ri-heart-line text-lg"></i>
+                {wishlistItems.length > 0 && (
+                  <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                    {wishlistItems.length}
+                  </span>
+                )}
               </Link>
               <button onClick={toggleCart} className="p-2 hover:bg-accent rounded-full transition-colors text-muted-foreground hover:text-secondary relative">
                 <i className="ri-shopping-cart-line text-lg"></i>

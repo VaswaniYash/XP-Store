@@ -25,7 +25,16 @@ import {
   Check
 } from "lucide-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, FormEvent } from "react";
+import { useSession } from "next-auth/react";
+
+interface Review {
+  _id: string;
+  user: { name: string; image?: string };
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -36,6 +45,85 @@ export default function ProductPage() {
   const [activeTab, setActiveTab] = useState("description");
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isCopied, setIsCopied] = useState(false);
+
+  const { data: session } = useSession();
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+  const [liveStock, setLiveStock] = useState<number | null>(null);
+  
+  // Review form state
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState("");
+
+  const fetchReviews = useCallback(async () => {
+    try {
+      setLoadingReviews(true);
+      const res = await fetch(`/api/reviews/${id}`);
+      const data = await res.json();
+      if (data.success) {
+        setReviews(data.data.reviews);
+        setAverageRating(data.data.averageRating);
+        setTotalReviews(data.data.totalReviews);
+      }
+    } catch (error) {
+      console.error("Failed to fetch reviews", error);
+    } finally {
+      setLoadingReviews(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchReviews();
+    
+    // Fetch live stock
+    const fetchStock = async () => {
+      try {
+        const res = await fetch(`/api/products/${id}`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          setLiveStock(data.data.stock);
+          if (data.data.stock === 0) setQuantity(0);
+        }
+      } catch (e) {
+        console.error("Failed to fetch stock", e);
+      }
+    };
+    fetchStock();
+  }, [fetchReviews, id]);
+
+  const submitReview = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!session) {
+      setReviewError("You must be logged in to review.");
+      return;
+    }
+    setSubmittingReview(true);
+    setReviewError("");
+    try {
+      const res = await fetch(`/api/reviews/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rating, comment })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setComment("");
+        setRating(5);
+        fetchReviews(); // Refresh review list
+      } else {
+        setReviewError(data.message || "Failed to submit review.");
+      }
+    } catch (err) {
+      setReviewError("An error occurred.");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   const product = products.find((p) => p._id === id);
 
@@ -60,7 +148,12 @@ export default function ProductPage() {
     product.image 
   ];
 
+  // Determine actual maximum the user can add (max 10 overall, and constrained by actual stock)
+  const currentStock = liveStock !== null ? liveStock : (product.stock || 5);
+  const maxBuyable = Math.min(10, currentStock);
+
   const handleAddToCart = () => {
+    if (quantity === 0) return;
     addToCart(product, quantity);
     setIsAdded(true);
     // openCart(); // Removed as per user request to only show button animation
@@ -70,6 +163,14 @@ export default function ProductPage() {
   const handleBuyNow = () => {
     addToCart(product, quantity);
     router.push('/checkout'); 
+  };
+
+  const handleShare = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    });
   };
 
   const handleNextImage = useCallback(() => {
@@ -175,8 +276,8 @@ export default function ProductPage() {
             <div className="flex items-center gap-6 mb-8 py-4 border-y border-border/50">
                <div className="flex items-center gap-1">
                   <Star className="w-5 h-5 fill-primary text-primary" />
-                  <span className="text-lg font-bold ml-1">4.9</span>
-                  <span className="text-muted-foreground text-sm ml-1">(128 Reviews)</span>
+                  <span className="text-lg font-bold ml-1">{averageRating > 0 ? averageRating.toFixed(1) : "0.0"}</span>
+                  <span className="text-muted-foreground text-sm ml-1">({totalReviews} Reviews)</span>
                </div>
                <div className="w-px h-6 bg-border"></div>
                <div className="flex items-center gap-2 text-green-500 font-medium">
@@ -196,9 +297,9 @@ export default function ProductPage() {
             
             {/* Hurry Badge */}
             <div className="mb-10">
-               <div className="inline-flex items-center gap-2 text-orange-600 dark:text-orange-400 text-sm font-medium">
+               <div className={`inline-flex items-center gap-2 text-sm font-medium ${currentStock > 0 ? 'text-orange-600 dark:text-orange-400' : 'text-red-500'}`}>
                  <div className="w-1.5 h-1.5 bg-current rounded-full"></div>
-                 Only {product.stock || 5} units left - Order soon
+                 {currentStock > 0 ? `Only ${currentStock} units left - Order soon` : 'Out of stock'}
                </div>
             </div>
 
@@ -209,7 +310,8 @@ export default function ProductPage() {
                   <div className="flex items-center bg-secondary/10 rounded-xl h-full w-36 px-1 border border-transparent hover:border-gold/20 transition-colors">
                      <button 
                        onClick={() => quantity > 1 && setQuantity(q => q - 1)}
-                       className="w-10 h-full flex items-center justify-center hover:text-primary transition-colors"
+                       disabled={currentStock === 0}
+                       className="w-10 h-full flex items-center justify-center hover:text-primary transition-colors disabled:opacity-50"
                      >
                        <Minus className="w-4 h-4" />
                      </button>
@@ -217,8 +319,9 @@ export default function ProductPage() {
                        {quantity}
                      </div>
                      <button 
-                       onClick={() => quantity < 10 && setQuantity(q => q + 1)}
-                       className="w-10 h-full flex items-center justify-center hover:text-primary transition-colors"
+                       onClick={() => quantity < maxBuyable && setQuantity(q => q + 1)}
+                       disabled={currentStock === 0 || quantity >= maxBuyable}
+                       className="w-10 h-full flex items-center justify-center hover:text-primary transition-colors disabled:opacity-50"
                      >
                        <Plus className="w-4 h-4" />
                      </button>
@@ -245,10 +348,13 @@ export default function ProductPage() {
 
             {/* Secondary Actions */}
             <div className="flex items-center justify-center gap-8 mb-8 text-sm font-medium text-muted-foreground">
-               <WishlistButton />
-               <button className="flex items-center gap-2 hover:text-primary transition-colors">
-                  <Share2 className="w-4 h-4" />
-                  Share Product
+               <WishlistButton product={product} />
+               <button 
+                  onClick={handleShare}
+                  className={`flex items-center gap-2 transition-colors ${isCopied ? 'text-green-500 font-bold' : 'hover:text-primary'}`}
+               >
+                  {isCopied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+                  {isCopied ? 'Link Copied!' : 'Share Product'}
                </button>
             </div>
 
@@ -301,7 +407,7 @@ export default function ProductPage() {
                { id: 'description', label: 'Description' },
                { id: 'specs', label: 'Specifications' },
                { id: 'inbox', label: 'In The Box' },
-               { id: 'reviews', label: 'Reviews (128)' }
+               { id: 'reviews', label: `Reviews (${totalReviews})` }
              ].map((tab) => (
                 <button
                   key={tab.id}
@@ -413,9 +519,120 @@ export default function ProductPage() {
              )}
 
              {activeTab === "reviews" && (
-                <div className="max-w-3xl mx-auto text-center py-12 text-muted-foreground">
-                   <Star className="w-12 h-12 text-primary/20 mx-auto mb-4" />
-                   <p>Reviews functionality is being upgraded.</p>
+                <div className="max-w-3xl mx-auto py-8">
+                   <div className="mb-12">
+                     <h3 className="text-2xl font-bold mb-6">Customer Reviews</h3>
+                     
+                     <div className="bg-secondary/5 border border-border/50 rounded-2xl p-6 md:p-8 flex items-center gap-8 mb-8">
+                        <div className="text-center w-32">
+                          <div className="text-5xl font-black text-primary mb-2">{averageRating > 0 ? averageRating.toFixed(1) : "0.0"}</div>
+                          <div className="flex gap-1 justify-center mb-1">
+                             {[...Array(5)].map((_, i) => (
+                               <Star key={i} className={`w-4 h-4 ${i < Math.round(averageRating) ? 'fill-primary text-primary' : 'text-muted-foreground/30'}`} />
+                             ))}
+                          </div>
+                          <div className="text-sm text-muted-foreground mt-2">Based on {totalReviews} reviews</div>
+                        </div>
+                        <div className="flex-1 hidden md:block border-l border-border/50 pl-8">
+                           <p className="text-lg font-medium">Share your thoughts</p>
+                           <p className="text-sm text-muted-foreground mb-4">If you've used this product, we'd love to hear about your experience.</p>
+                           {!session && (
+                               <button onClick={() => router.push('/api/auth/signin')} className="text-sm text-primary hover:underline font-bold">Sign in to write a review</button>
+                           )}
+                        </div>
+                     </div>
+
+                     {session ? (
+                       <form onSubmit={submitReview} className="bg-card border border-border rounded-xl p-6 md:p-8 mb-12 shadow-sm">
+                         <h4 className="font-bold text-lg mb-6">Write a Review</h4>
+                         {reviewError && <div className="p-3 bg-red-500/10 text-red-500 rounded-lg mb-6 text-sm flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>{reviewError}</div>}
+                         <div className="mb-6">
+                           <label className="block text-sm font-bold mb-3 text-muted-foreground uppercase tracking-wider">Overall Rating</label>
+                           <div className="flex gap-2">
+                             {[1, 2, 3, 4, 5].map((star) => (
+                               <button 
+                                 type="button" 
+                                 key={star} 
+                                 onClick={() => setRating(star)}
+                                 className="focus:outline-none transition-transform hover:scale-110 active:scale-95"
+                               >
+                                 <Star className={`w-8 h-8 ${rating >= star ? 'fill-primary text-primary' : 'text-muted-foreground/30 hover:text-primary/50'}`} />
+                               </button>
+                             ))}
+                           </div>
+                         </div>
+                         <div className="mb-6">
+                           <label className="block text-sm font-bold mb-3 text-muted-foreground uppercase tracking-wider">Your Comment</label>
+                           <textarea
+                             value={comment}
+                             onChange={(e) => setComment(e.target.value)}
+                             required
+                             rows={4}
+                             className="w-full bg-background border border-border rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
+                             placeholder="What did you like or dislike about this product?"
+                           />
+                         </div>
+                         <button
+                           type="submit"
+                           disabled={submittingReview || !comment.trim()}
+                           className={`w-full md:w-auto px-8 py-3 rounded-full font-bold transition-all ${submittingReview || !comment.trim() ? "bg-muted text-muted-foreground cursor-not-allowed" : "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 active:scale-95"}`}
+                         >
+                           {submittingReview ? "Submitting..." : "Submit Review"} 
+                         </button>
+                       </form>
+                     ) : (
+                       <div className="bg-gradient-to-br from-secondary/10 to-transparent border border-border rounded-xl p-8 text-center mb-12 relative overflow-hidden group">
+                         <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                         <h4 className="font-bold text-lg mb-2 relative z-10">Join the Community</h4>
+                         <p className="text-muted-foreground mb-6 relative z-10">You must be logged in to write a review and share your experience.</p>
+                         <PremiumButton text="Login to Review" variant="black" onClick={() => router.push('/api/auth/signin')} className="mx-auto relative z-10" />
+                       </div>
+                     )}
+
+                     <div className="space-y-6">
+                       {loadingReviews ? (
+                         <div className="flex items-center justify-center py-12">
+                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                         </div>
+                       ) : reviews.length > 0 ? (
+                         reviews.map((review) => (
+                           <div key={review._id} className="bg-card border border-border/50 rounded-xl p-6 transition-all hover:border-border hover:shadow-sm">
+                             <div className="flex items-start justify-between mb-4">
+                               <div className="flex items-center gap-4">
+                                 {review.user.image ? (
+                                   <img src={review.user.image} alt={review.user.name} className="w-12 h-12 rounded-full border border-border object-cover" />
+                                 ) : (
+                                   <div className="w-12 h-12 bg-primary/20 text-primary rounded-full flex items-center justify-center font-black text-lg">
+                                     {review.user.name.charAt(0).toUpperCase()}
+                                   </div>
+                                 )}
+                                 <div>
+                                   <div className="font-bold text-foreground">{review.user.name}</div>
+                                   <div className="text-xs text-muted-foreground mt-0.5">{new Date(review.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                                 </div>
+                               </div>
+                               <div className="flex gap-1 bg-secondary/30 px-3 py-1.5 rounded-full">
+                                 {[...Array(5)].map((_, i) => (
+                                   <Star key={i} className={`w-3.5 h-3.5 ${i < review.rating ? 'fill-primary text-primary' : 'text-muted-foreground/30'}`} />
+                                 ))}
+                               </div>
+                             </div>
+                             <p className="text-muted-foreground leading-relaxed md:pl-16">
+                               {review.comment}
+                             </p>
+                           </div>
+                         ))
+                       ) : (
+                         <div className="text-center py-16 border border-dashed border-border rounded-2xl bg-secondary/5">
+                           <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                             <Star className="w-8 h-8 text-primary" />
+                           </div>
+                           <h4 className="font-bold text-lg mb-2">No reviews yet</h4>
+                           <p className="text-muted-foreground">Be the first to review this product and help others make a decision!</p>
+                         </div>
+                       )}
+                     </div>
+                   </div>
                 </div>
              )}
           </div>

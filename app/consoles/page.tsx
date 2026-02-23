@@ -22,7 +22,7 @@ const categories = [
 // Memoize banner configurations
 const bannerConfigs = {
   PlayStation: {
-    image: "/Images/product-1.webp",
+    image: "/Images/consoles/ps5-console.png",
     title: "PLAYSTATION 5",
     subtitle: "Play Has No Limits",
     description: "Experience the power of next-gen gaming with lightning-fast SSD, haptic feedback, and stunning 4K graphics.",
@@ -30,7 +30,7 @@ const bannerConfigs = {
     bgGradient: "from-blue-600/90 via-blue-500/20 to-background dark:from-blue-950 dark:via-blue-900/40 dark:to-background"
   },
   Xbox: {
-    image: "/Images/product-2.webp",
+    image: "/Images/consoles/xbox-series-x.png",
     title: "XBOX SERIES X",
     subtitle: "Power Your Dreams",
     description: "The fastest, most powerful Xbox ever. Play thousands of games across four generations with Game Pass.",

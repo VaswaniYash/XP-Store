@@ -18,6 +18,7 @@ function ProfileContent() {
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const [user, setUser] = useState<any>(null);
+  const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   
@@ -73,6 +74,19 @@ function ProfileContent() {
           bio: data.data.bio || "",
           image: data.data.image || ""
         });
+        
+        // Fetch orders if we have a user ID
+        if (data.data._id) {
+           try {
+             const ordersRes = await fetch(`/api/orders?userId=${data.data._id}`);
+             const ordersData = await ordersRes.json();
+             if (ordersData.success) {
+                setOrders(ordersData.data);
+             }
+           } catch (err) {
+             console.error("Failed to fetch orders:", err);
+           }
+        }
       } else {
         // Only redirect if completely unauthorized
         if (res.status === 401 && status === "unauthenticated") {
@@ -462,16 +476,78 @@ function ProfileContent() {
                         <CardDescription>View your past orders.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex flex-col items-center justify-center py-12 text-center">
-                            <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
-                                <i className="ri-shopping-bag-3-line text-3xl text-primary/50"></i>
+                        {orders.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-12 text-center">
+                                <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
+                                    <i className="ri-shopping-bag-3-line text-3xl text-primary/50"></i>
+                                </div>
+                                <h3 className="text-lg font-medium mb-2">No orders yet</h3>
+                                <p className="text-muted-foreground mb-6 max-w-sm">
+                                    You haven't placed any orders yet. Start shopping to fill your game libary!
+                                </p>
+                                <Button onClick={() => router.push("/")} variant="outline">Browse Products</Button>
                             </div>
-                            <h3 className="text-lg font-medium mb-2">No orders yet</h3>
-                            <p className="text-muted-foreground mb-6 max-w-sm">
-                                You haven't placed any orders yet. Start shopping to fill your game libary!
-                            </p>
-                            <Button onClick={() => router.push("/")} variant="outline">Browse Products</Button>
-                        </div>
+                        ) : (
+                            <div className="space-y-6">
+                                {orders.map((order) => (
+                                    <div key={order._id} className="border border-border/50 rounded-xl p-6 bg-background/50 flex flex-col md:flex-row gap-6">
+                                        <div className="flex-1 space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-1">Order #{order._id.substring(0, 8).toUpperCase()}</p>
+                                                    <p className="text-xs text-muted-foreground">{new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="font-bold text-lg mb-1 hidden sm:block">₹{order.total.toLocaleString()}</p>
+                                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${
+                                                        order.status === 'Delivered' ? 'bg-green-500/10 text-green-500' :
+                                                        order.status === 'Processing' ? 'bg-orange-500/10 text-orange-500' :
+                                                        'bg-primary/10 text-primary'
+                                                    }`}>
+                                                        <span className={`w-1.5 h-1.5 rounded-full ${
+                                                            order.status === 'Delivered' ? 'bg-green-500' :
+                                                            order.status === 'Processing' ? 'bg-orange-500 animate-pulse' :
+                                                            'bg-primary'
+                                                        }`}></span>
+                                                        {order.status}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="flex flex-wrap gap-3 mt-4">
+                                                {order.items.map((item: any, idx: number) => (
+                                                    <div key={idx} className="flex items-center gap-3 bg-card border border-border/50 rounded-lg p-2 pr-4">
+                                                        <div className="w-12 h-12 rounded bg-secondary/20 flex-shrink-0 p-1">
+                                                            <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm font-medium line-clamp-1">{item.name}</p>
+                                                            <p className="text-xs text-muted-foreground">Qty: {item.quantity} • ₹{item.price.toLocaleString()}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="w-full md:w-64 flex flex-col items-start justify-center pl-0 md:pl-6 border-t md:border-t-0 md:border-l border-border/50 pt-4 md:pt-0">
+                                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Tracking (AWB)</p>
+                                            <div className="bg-primary/5 border border-primary/20 text-primary font-mono text-sm py-2 px-3 rounded-lg font-bold mb-4 w-full flex items-center gap-2">
+                                                <i className="ri-hashtag opacity-50"></i>
+                                                {order.awb ? order.awb.toUpperCase() : 'PENDING'}
+                                            </div>
+                                            <Button 
+                                                variant="outline" 
+                                                className="w-full"
+                                                onClick={() => router.push(`/track?awb=${order.awb}`)}
+                                                disabled={!order.awb}
+                                            >
+                                                Track Package
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
               </TabsContent>

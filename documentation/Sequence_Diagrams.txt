@@ -1,0 +1,211 @@
+XP Store — Sequence Diagrams
+==============================
+
+
+SCENARIO 1: User Registration & Login
+======================================
+
+sequenceDiagram
+    actor C as Customer
+    participant UI as Next.js Frontend
+    participant API as /api/auth
+    participant DB as MongoDB
+
+    Note over C,DB: === REGISTRATION ===
+
+    C->>UI: Fill register form (name, email, password)
+    UI->>API: POST /api/auth/register
+    activate API
+    API->>DB: connectDB()
+    API->>DB: User.findOne({ email })
+    DB-->>API: null (not found)
+    API->>API: bcrypt.hash(password, 10)
+    API->>DB: User.create({ name, email, hashedPassword })
+    DB-->>API: newUser
+    API-->>UI: 201 { success: true, data: { name, email } }
+    deactivate API
+    UI-->>C: "Registration successful"
+
+    alt User Already Exists
+        API->>DB: User.findOne({ email })
+        DB-->>API: existingUser
+        API-->>UI: 400 { message: "User already exists" }
+        UI-->>C: Show error
+    end
+
+    Note over C,DB: === LOGIN ===
+
+    C->>UI: Enter email + password
+    UI->>API: POST /api/auth/login
+    activate API
+    API->>DB: connectDB()
+    API->>DB: User.findOne({ email })
+    DB-->>API: user
+    API->>API: bcrypt.compare(password, user.password)
+    API->>API: jwt.sign({ id, email, name }, secret, 7d)
+    API-->>UI: 200 { success: true, token }
+    deactivate API
+    UI->>UI: Store token in cookie
+    UI-->>C: Redirect to homepage
+
+    alt Invalid Credentials
+        API->>API: bcrypt.compare → false
+        API-->>UI: 400 { message: "Invalid credentials" }
+        UI-->>C: Show error
+    end
+
+
+SCENARIO 2: Google OAuth Login
+==============================
+
+sequenceDiagram
+    actor C as Customer
+    participant UI as Next.js Frontend
+    participant NA as NextAuth
+    participant G as Google OAuth
+    participant DB as MongoDB
+
+    C->>UI: Click "Sign in with Google"
+    UI->>NA: signIn("google")
+    NA->>G: Redirect to Google consent screen
+    C->>G: Authorize app
+    G-->>NA: OAuth token + user info (name, email)
+
+    activate NA
+    NA->>NA: signIn callback triggered
+    NA->>DB: connectDB()
+    NA->>DB: User.findOne({ email })
+
+    alt New User
+        DB-->>NA: null
+        NA->>DB: User.create({ name, email, role: "user" })
+        DB-->>NA: newUser
+    else Existing User
+        DB-->>NA: existingUser
+    end
+
+    NA->>NA: return true (allow sign-in)
+    NA-->>UI: Session cookie set
+    deactivate NA
+    UI-->>C: Redirect to homepage (name shown in navbar)
+
+
+SCENARIO 3: Browse Products → Add to Cart → Place Order
+========================================================
+
+sequenceDiagram
+    actor C as Customer
+    participant UI as Next.js Frontend
+    participant API as /api/products
+    participant Cart as localStorage
+    participant OAPI as /api/orders
+    participant DB as MongoDB
+
+    Note over C,DB: === BROWSE ===
+
+    C->>UI: Open /consoles page
+    UI->>API: GET /api/products?category=PlayStation&sort=newest&page=1
+    activate API
+    API->>API: Filter static products array
+    API->>API: Sort & paginate (limit 12)
+    API-->>UI: { products: [...], pagination: { total, pages, current } }
+    deactivate API
+    UI-->>C: Render product grid
+
+    Note over C,DB: === ADD TO CART ===
+
+    C->>UI: Click "Add to Cart" on PS5 Console
+    activate UI
+    UI->>UI: addToCart(product, qty=1)
+    UI->>UI: Check if item already in cart
+
+    alt Already in Cart
+        UI->>UI: Increment quantity
+    else New Item
+        UI->>UI: Append { ...product, quantity: 1 }
+    end
+
+    UI->>Cart: localStorage.setItem("cart", JSON.stringify(items))
+    UI-->>C: Open cart sidebar, show updated total
+    deactivate UI
+
+    Note over C,DB: === PLACE ORDER ===
+
+    C->>UI: Click "Checkout" then "Place Order"
+    UI->>Cart: localStorage.getItem("cart")
+    Cart-->>UI: cart items JSON
+
+    UI->>OAPI: POST /api/orders/create { userId, items, totalPrice }
+    activate OAPI
+    OAPI->>DB: connectDB()
+    OAPI->>DB: Order.create({ userId, items, totalPrice, status: "pending" })
+    DB-->>OAPI: newOrder
+    OAPI-->>UI: 201 { success: true, data: newOrder }
+    deactivate OAPI
+
+    UI->>Cart: localStorage.removeItem("cart")
+    UI-->>C: "Order successfully placed!"
+
+
+SCENARIO 4: View & Update Profile
+==================================
+
+sequenceDiagram
+    actor C as Customer
+    participant UI as Next.js Frontend
+    participant API as /api/users
+    participant Auth as Auth Helpers
+    participant DB as MongoDB
+
+    Note over C,DB: === VIEW PROFILE ===
+
+    C->>UI: Navigate to /profile
+    UI->>API: GET /api/users
+    activate API
+    API->>Auth: getAuthToken()
+
+    alt JWT Token Present
+        Auth-->>API: token
+        API->>Auth: verifyToken(token)
+        Auth-->>API: { id, email, name }
+        API->>DB: User.findById(id).select("-password")
+    else Google Session
+        Auth-->>API: null
+        API->>Auth: auth() (NextAuth session)
+        Auth-->>API: session.user.email
+        API->>DB: User.findOne({ email }).select("-password")
+    end
+
+    DB-->>API: user document
+    API-->>UI: 200 { success: true, data: user }
+    deactivate API
+    UI-->>C: Display profile (name, email, phone, address, bio, image)
+
+    Note over C,DB: === UPDATE PROFILE ===
+
+    C->>UI: Edit fields, click "Save"
+    UI->>API: PUT /api/users { name, phone, address, bio, image }
+    activate API
+    API->>Auth: getAuthToken() / auth()
+    Auth-->>API: userId
+    API->>DB: User.findByIdAndUpdate(userId, { $set: fields }, { new: true })
+    DB-->>API: updatedUser
+    API-->>UI: 200 { success: true, data: updatedUser }
+    deactivate API
+    UI-->>C: "Profile updated successfully"
+
+    alt Unauthorized
+        API-->>UI: 401 { message: "Unauthorized" }
+        UI-->>C: Redirect to login
+    end
+
+
+TEXT SUMMARY
+============
+
+Scenario | Participants                    | Key Features
+---------|---------------------------------|-----------------------------------
+1. Register & Login | Customer, Frontend, Auth API, MongoDB | bcrypt hashing, JWT signing, error handling
+2. Google OAuth     | Customer, Frontend, NextAuth, Google, MongoDB | OAuth redirect, user upsert, session
+3. Browse → Order   | Customer, Frontend, Products API, localStorage, Orders API, MongoDB | Filter/sort/paginate, cart persistence, order creation
+4. View/Update Profile | Customer, Frontend, Users API, Auth Helpers, MongoDB | Dual auth (JWT + Google session), field updates
